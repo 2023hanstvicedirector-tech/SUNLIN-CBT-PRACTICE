@@ -29,13 +29,13 @@
         .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         
         /* 교시 선택 버튼 스타일 */
-        .exam-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; text-decoration: none; color: #333; font-weight: bold; transition: 0.2s; box-sizing: border-box; }
+        .exam-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; text-decoration: none; color: #333; font-weight: bold; transition: 0.2s; box-sizing: border-box; cursor: pointer; }
         .exam-btn:hover { background: #e8f4fd; border-color: #0056b3; color: #0056b3; transform: translateY(-2px); }
         .exam-btn span { font-size: 1.1em; }
         .exam-btn small { font-size: 0.75em; color: #888; font-weight: normal; margin-top: 4px; }
 
-        /* 준비중인 버튼 스타일 */
-        .exam-btn.disabled { background: #ebebeb; border-color: #ddd; color: #aaa; cursor: not-allowed; pointer-events: none; }
+        /* [수정] 준비중인 버튼 스타일 - 알림창을 띄우기 위해 pointer-events 제거 */
+        .exam-btn.disabled { background: #ebebeb; border-color: #ddd; color: #aaa; }
         .exam-btn.disabled small { color: #aaa; }
 
         /* 푸터 */
@@ -73,11 +73,11 @@
             </a>
             <a href="2019_2.html" class="exam-btn">
                 <span>2교시</span>
-                <small>의료법규 등 (105문항)</small>
+                <small>의료관계법규 외 (105문항)</small>
             </a>
-            <a href="2019_3.html" class="exam-btn">
+            <a href="#" class="exam-btn disabled">
                 <span>3교시</span>
-                <small>실기시험 (준비중)</small>
+                <small>실기시험</small>
             </a>
         </div>
     </div>
@@ -87,23 +87,35 @@
         <div class="btn-group">
             <a href="#" class="exam-btn disabled">
                 <span>1교시</span>
-                <small>시광학이론 (준비중)</small>
+                <small>시광학이론</small>
             </a>
             <a href="#" class="exam-btn disabled">
                 <span>2교시</span>
-                <small>의료법전 등 (준비중)</small>
+                <small>의료관계법규 외</small>
             </a>
             <a href="#" class="exam-btn disabled">
                 <span>3교시</span>
-                <small>실기시험 (준비중)</small>
+                <small>실기시험</small>
             </a>
         </div>
     </div>
 </div>
 
 <footer>
-    <p>© 안경사 CBT 모의고사 포털. All 시광학이론 연동 완료.</p>
+    <p>© 안경사 CBT 모의고사 포털. All rights reserved.</p>
 </footer>
+
+<script>
+    document.querySelectorAll('.exam-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // 주소가 '#' 이거나 disabled 클래스를 가지고 있으면 링크 이동을 막고 알림창 표시
+            if (this.getAttribute('href') === '#' || this.classList.contains('disabled')) {
+                e.preventDefault(); // 기본 링크 이동 기능 방지
+                alert('아직 준비중입니다.');
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
