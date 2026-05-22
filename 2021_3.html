@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2021 안경사 국가고시 CBT - 3교시 실전 이미지 모드</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .main-wrapper { display: flex; width: 100%; max-width: 1100px; gap: 20px; }
+        .quiz-container { flex: 7; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 500px; }
+        .question { font-size: 1.25em; font-weight: bold; margin-bottom: 25px; color: #222; white-space: pre-line; line-height: 1.5; }
+        .options label { display: block; padding: 12px 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #e9ecef; }
+        .btn-container { display: flex; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 25px; background: #198754; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: 0.15s; }
+        .btn:hover { background: #146c43; }
+        .btn.secondary { background: #6c757d; }
+        .btn.secondary:hover { background: #5a6268; }
+        .btn.danger { background: #d9534f; }
+        .btn.danger:hover { background: #c9302c; }
+        #answer-display { font-size: 1.15em; font-weight: bold; color: #d9534f; margin-left: 10px; }
+        .sidebar { flex: 3; display: flex; flex-direction: column; gap: 20px; min-width: 280px; }
+        .timer-box { background: #212529; color: #00ffcc; padding: 20px; text-align: center; border-radius: 10px; font-size: 1.8em; font-family: 'Courier New', monospace; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .timer-label { font-size: 0.4em; color: #aaa; display: block; margin-bottom: 5px; font-family: 'Malgun Gothic'; }
+        .omr-box { background: white; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .omr-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        .omr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
+        .omr-btn { padding: 8px 0; font-size: 0.85em; font-weight: bold; border: 1px solid #ced4da; background: #fff; border-radius: 4px; cursor: pointer; text-align: center; color: #495057; transition: 0.15s; }
+        .omr-btn:hover { background: #e9ecef; }
+        .omr-btn.answered { background: #198754; color: white; border-color: #146c43; }
+        .omr-btn.current { outline: 3px solid #ffc107; outline-offset: -3px; }
+        .calc-box { background: #f8f9fa; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .calc-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        #calc-screen { width: 100%; height: 45px; background: white; border: 1px solid #ced4da; border-radius: 5px; margin-bottom: 10px; font-size: 1.4em; text-align: right; padding: 5px 10px; box-sizing: border-box; font-family: monospace; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { padding: 12px; font-size: 1.1em; font-weight: bold; background: white; border: 1px solid #dee2e6; border-radius: 5px; cursor: pointer; }
+        .calc-btn:hover { background: #e9ecef; }
+        .calc-btn.operator { background: #e8f4fd; color: #198754; }
+        .calc-btn.clear { background: #fff5f5; color: #d9534f; }
+        .calc-btn.equal { background: #198754; color: white; grid-column: span 2; }
+        .wrong-box { margin-bottom: 20px; padding: 15px; background: #fff5f5; border-left: 5px solid #d9534f; border-radius: 4px; }
+        .wrong-title { font-weight: bold; color: #333; margin-bottom: 8px; white-space: pre-line; line-height: 1.4; }
+        .my-ans { color: #d9534f; font-weight: bold; margin: 4px 0; }
+        .correct-ans { color: #2b8a3e; font-weight: bold; margin: 4px 0; }
+
+        /* 🎨 임상 실기 전용 시표 시뮬레이터 벡터 그래픽 스타일링 */
+        .diagram-container { background: #ffffff; border: 2px dashed #777; border-radius: 8px; padding: 15px; margin: 15px 0; display: inline-block; text-align: center; }
+        .lens-axis-circle { width: 150px; height: 150px; border: 2px solid #333; border-radius: 50%; position: relative; background: #fafafa; display: inline-block; }
+        .axis-line { position: absolute; background: #0056b3; height: 2px; top: 50%; left: 0; right: 0; transform-origin: 50% 50%; }
+        .axis-line.red { background: #d9534f; }
+        .target-dot { position: absolute; width: 6px; height: 6px; background: #2b8a3e; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .grid-circle { position: absolute; border: 1px dashed #ccc; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="quiz-container">
+        <h2>2021 제34회 안경사 국가고시 - 3교시 (실기시험)</h2>
+        <div style="font-size:0.9em; color:#666; margin-bottom:10px;" id="progress-display">문항 수 계산 중...</div>
+        <hr>
+        <div id="quiz-area">
+            <div id="question-text" class="question">문제가 여기에 표시됩니다.</div>
+            <div id="diagram-area"></div>
+            <div id="options-area" class="options"></div>
+            <div class="btn-container">
+                <button class="btn secondary" onclick="prevQuestion()">이전 문제</button>
+                <button class="btn" onclick="nextQuestion()">다음 문제</button>
+                <button class="btn secondary" onclick="showAnswer()">답 보기</button>
+                <button class="btn danger" onclick="confirmSubmit()" style="margin-left: auto;">시험 종료</button>
+                <span id="answer-display"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="timer-box">
+            <span class="timer-label">경과 시간</span>
+            <span id="timer-display">00:00</span>
+        </div>
+        <div class="omr-box">
+            <h4>문항 바로가기 (OMR)</h4>
+            <div id="omr-grid-container" class="omr-grid"></div>
+        </div>
+        <div class="calc-box">
+            <h4>시험용 계산기</h4>
+            <input type="text" id="calc-screen" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn operator" onclick="appendCalc('/')">÷</button>
+                <button class="calc-btn operator" onclick="appendCalc('*')">×</button>
+                <button class="calc-btn operator" onclick="appendCalc('-')">-</button>
+                <button class="calc-btn" onclick="appendCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendCalc('+')">+</button>
+                <button class="calc-btn" onclick="appendCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendCalc('6')">6</button>
+                <button class="calc-btn" onclick="appendCalc('.')">.</button>
+                <button class="calc-btn" onclick="appendCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendCalc('3')">3</button>
+                <button class="calc-btn" onclick="appendCalc('0')">0</button>
+                <button class="calc-btn equal" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2021년도 제34회 안경사 3교시 실기시험 기출문제 및 정답 통합 배열 (1번~60번 전체)
+    const testData = [
+        { "id": 1, "question": "1. 광학중심점 높이(Oh)의 측정방법으로 옳은 것은?", "options": ["경사각이 결정되기 전에 측정한다.", "표준상태피팅을 하기 전에 측정한다.", "안경테의 상부림에서 동공중심까지 높이를 측정한다.", "경사각 0°인 자세에서는 안경테 하부림에서 동공중심까지 높이를 측정한다.", "자연스러운 자세에서는 안경테 하부림에서 상부림까지 높이를 측정한다."], "answer": 3 },
+        { "id": 2, "question": "2. 다음 원용 안경처방서에서 조제가공 Oh는?\n\n• OD: S -5.00 D ⌒ C -1.00 D Ax 90°, 1 Δ BD\n• 측정 Oh: 25 mm", "options": ["21 mm", "23 mm", "25 mm", "27 mm", "29 mm"], "answer": 3 },
+        { "id": 3, "question": "3. 다음 원용 안경처방서에서 조제가공 PD는?\n\n• OU: S -2.00 D ⌒ C -3.00 D Ax 180°, 1 Δ BI\n• 측정기준 PD: 60 mm", "options": ["55 mm", "60 mm", "65 mm", "70 mm", "75 mm"], "answer": 3 },
+        { "id": 4, "question": "4. 인점에 의한 방법으로 설계점을 구할 때, 먼저 이루어져야 하는 피팅은?", "options": ["기본피팅", "미세조정", "응용피팅", "가공후피팅", "사용중피팅"], "answer": 0 },
+        { "id": 5, "question": "5. 원용 PD가 65 mm이고, 안경테 표기가 52□16 140 일 때, 무편심 렌즈의 필요 최소 직경은? (단, 홈 깊이를 포함한 렌즈삽입부 최장길이는 55 mm이고, 작업여유분은 2 mm임)", "options": ["55 mm", "60 mm", "65 mm", "70 mm", "75 mm"], "answer": 1 },
+        { "id": 6, "question": "6. 형판의 기준점에서 설계점까지의 수평 편위량은?", "diagram": "inset_shift", "options": ["코방향으로 2 mm", "코방향으로 3 mm", "코방향으로 4 mm", "귀방향으로 2 mm", "귀방향으로 3 mm"], "answer": 1 },
+        { "id": 7, "question": "7. 정식계측방법으로 설계점을 설정할 때, 형판의 기준점에서 설계점까지의 수평 편위량은?\n\n• OD: S -1.50 D ⌒ C -0.50 D Ax 180°, 단안 PD 33 mm\n• 안경테 표기: 54□16 140", "options": ["코방향으로 1 mm", "코방향으로 2 mm", "코방향으로 3 mm", "귀방향으로 1 mm", "귀방향으로 2 mm"], "answer": 1 },
+        { "id": 8, "question": "8. 박싱시스템에 의한 안경테 계측에서 상, 하, 좌, 우 홈선의 접선이 만든 좌·우 두 사각형 사이의 거리는?", "options": ["연결부 길이", "기준점간 거리", "렌즈삽입부 크기", "렌즈삽입부 수직길이", "렌즈삽입부 최장길이"], "answer": 0 },
+        { "id": 9, "question": "9. 망원경식 렌즈미터에서 조절력개입을 방지하고 측정오차를 줄이기 위해 조작하는 것은?", "options": ["인점레버", "렌즈받침부", "시도조정환", "주경선 방향환", "타깃 회전다이얼"], "answer": 2 },
+        { "id": 10, "question": "10. 다음과 같이 안경렌즈 봉투에 굴절력이 표기되어 있다. 근시성 복성난시를 교정할 수 있는 렌즈 시표 배치는?", "diagram": "envelope_lens", "options": ["①번 배치", "②번 배치", "③번 배치", "④번 배치", "⑤번 배치"], "answer": 1 },
+        { "id": 11, "question": "11. 다음과 같이 렌즈미터로 측정된 렌즈의 굴절력은?", "diagram": "lensmeter_read", "options": [
+                "S -1.00 D ⌒ C -1.00 D Ax 90°",
+                "S -1.00 D ⌒ C -2.00 D Ax 90°",
+                "S -1.00 D ⌒ C -1.00 D Ax 180°",
+                "S -2.00 D ⌒ C -1.00 D Ax 180°",
+                "S -2.00 D ⌒ C +1.00 D Ax 180°"
+            ], "answer": 2 },
+        { "id": 12, "question": "12. 누진굴절력렌즈의 두께와 무게를 줄이기 위한 가공방법은?",
+            "options": ["베이스인(base in)가공", "베이스아웃(base out)가공", "슬래브오프(slab off)가공", "슬래브다운(slab down)가공", "프리즘시닝(prism thinning)가공"], "answer": 4 },
+        { "id": 13, "question": "13. 다음 처방으로 조제된 안경의 조제가공 PD 중 허용오차 범위 내에 있는 것은? (단, Oh는 정확하게 가공됨)\n\n• 원용 OU: S -4.00 D, 측정기준 PD: 60 mm \n• 허용오차: 큰 방향 1 Δ, 작은 방향 0.5 Δ", "options": ["53 mm", "58 mm", "63 mm", "68 mm", "73 mm"], "answer": 1 },
+        { "id": 14, "question": "14. 안경테에 렌즈를 끼워 넣은 후 렌즈의 크기와 모양이 적합한지 확인하는 기기는?", "options": ["렌즈미터(lensmeter)", "왜곡검사기(strainer)", "구면계(spherometer)", "동공거리계(PD meter)", "각막곡률계(keratometer)"], "answer": 1 },
+        { "id": 15, "question": "15. 원거리를 볼 때 프리즘 효과를 유발하지 않도록 하는 앞렌즈의 굴절력과 광학중심점간 거리는? (단, Oh는 고려하지 않음)\n\n• 원용 OU: S -1.00 D ⌒ C -1.00 D Ax 90°, PD 64 mm\n• 근용 OU: S +2.00 D ⌒ C -1.00 D Ax 90°, PD 61 mm\n• 원용: 앞렌즈 + 뒷렌즈\n• 근용: 뒷렌즈", "options": ["S -2.00 D, 63 mm", "S -2.00 D, 65 mm", "S -3.00 D, 63 mm", "S -3.00 D, 64 mm", "S -3.00 D, 65 mm"], "answer": 2 },
+        { "id": 16, "question": "16. 다음 처방으로 조제할 때 조제가공 PD는?\n\n• OU: S -3.00 D ⌒ C -1.00 D Ax 90°, 1 Δ BI\n• 측정기준 PD: 64 mm", "options": ["59 mm", "64 mm", "69 mm", "72 mm", "74 mm"], "answer": 2 },
+        { "id": 17, "question": "17. 다음 처방으로 조제할 때 조제가공 Oh는?\n\n• OD: S +4.00 D, 2 Δ BU\n• 측정 Oh: 20 mm", "options": ["21 mm", "22 mm", "23 mm", "24 mm", "25 mm"], "answer": 4 },
+        { "id": 18, "question": "18. 새로운 안경테로 안경을 바꾸려고 한다. 현재 착용 중인 이중초점안경은 편안하다. 기존 안경의 근용부 상부경계선 높이와 동일하게 안경을 조제하려면, 새로운 안경의 조제가공 Oh는?", "diagram": "bifocal_oh", "options": ["19 mm", "21 mm", "23 mm", "25 mm", "27 mm"], "answer": 1 },
+        { "id": 19, "question": "19. 원용을 주로 사용하는 이중초점안경의 설계점 높이를 설정할 때, 근용부 상부경계선의 높이는?",
+            "options": ["동공중심", "상부동공연", "하부동공연", "하안검연 위 1~2 mm", "하안검연 아래 2~3 mm"], "answer": 4 },
+        { "id": 20, "question": "20. 다음 처방에서 원용 안경의 굴절력은?\n\n• 근용 OU: C +1.50 D Ax 90°\n• Add 1.50 D", "options": ["S 0.00 D", "S -1.50 D ⌒ C +1.50 D Ax 90°", "S -1.50 D ⌒ C -1.50 D Ax 90°", "S -1.50 D ⌒ C +1.50 D Ax 180°", "S +1.50 D ⌒ C -1.50 D Ax 180°"], "answer": 1 },
+        { "id": 21, "question": "21. 다음 처방의 이중초점안경을 착용하고 근거리를 주시할 때, 수직 프리즘 효과의 불균형을 없애기 위한 슬래브오프(slab off) 가공은?\n\n• 원용 OD: S -2.00 D | OS: S -5.00 D\n• Add 2.00 D", "options": ["왼쪽에 BU 효과를 준다.", "왼쪽에 BD 효과를 준다.", "오른쪽에 BI 효과를 준다.", "오른쪽에 BO 효과를 준다.", "양쪽 모두에 BU 효과를 준다."], "answer": 0 },
+        { "id": 22, "question": "22. 다음 처방으로 근용 안경을 조제가공하려고 한다. 왼쪽 렌즈의 근용 표기로 옳은 것은?\n\n• 원용 OD: S +1.00 D ⌒ C -1.75 D Ax 100° | OS: S +0.50 D ⌒ C -2.00 D Ax 80°\n• Add 2.50 D", "options": [
+                "S +2.50 D ⌒ C -1.75 D Ax 100°",
+                "S +2.50 D ⌒ C -1.75 D Ax 10°",
+                "S +3.00 D ⌒ C -2.00 D Ax 80°",
+                "S +3.00 D ⌒ C -2.00 D Ax 170°",
+                "S +3.50 D ⌒ C +0.75 D Ax 100°"
+            ], "answer": 2 },
+        { "id": 23, "question": "23. 누진굴절력안경을 조제할 때 원용동공중심과 일치시켜야 하는 위치는?", "options": ["기하중심", "숨김마크", "수평기준선", "아이포인트", "근용부 참조원"], "answer": 3 },
+        { "id": 24, "question": "24. 완성된 누진굴절력안경을 거울검사법으로 확인한 결과 동공의 위치가 그림과 같다. 안경테 미세조정 방법은?", "diagram": "mirror_test", "options": ["정점간거리를 길게 한다.", "다리경사각을 크게 한다.", "안경테 좌·우 코받침 간격을 좁게 한다.", "안경테 좌·우 코받침 위치를 아래로 내린다."], "answer": 2 },
+        { "id": 25, "question": "25. 시력이 좋지 않아 눈 앞 30 cm에서 손을 흔들었을 때 움직임 정도만을 인지하는 시력은?", "options": ["소수시력 0.1", "소수시력 0.04", "광각(light perception)", "안전수지(finger count)", "안전수동(hand movement)"], "answer": 4 },
+        { "id": 26, "question": "26. 예비검사에서 나안시력과 핀홀(pin-hole)시력을 측정하여 알 수 있는 것은?", "options": ["난시 축방향", "사위 유무 구분", "근시와 절대원시 구분", "정시와 수의원시 구분", "안경으로 교정 가능 여부"], "answer": 4 },
+        { "id": 27, "question": "27. 안모형통의 기준선에 수치 '+1'을 일치시키고, 안모형통 앞의 렌즈받침대에 C -1.00 D Ax 180°를 가입하였다. 합성된 광학계의 굴절상태는?", "options": [
+                "S -1.00 D ⌒ C +1.00 D Ax 90°로 교정될 단성난시",
+                "S +1.00 D ⌒ C -1.00 D Ax 180°로 교정될 혼합난시",
+                "S +1.00 D ⌒ C +1.00 D Ax 90°로 교정될 원시성 복성난시",
+                "S +1.00 D ⌒ C +1.00 D Ax 180°로 교정될 원시성 복성난시",
+                "S -1.00 D ⌒ C -1.00 D Ax 180°로 교정될 근시성 복성난시"
+            ], "answer": 2 },
+        { "id": 28, "question": "28. 자동안굴절력계로 측정한 값이다. 등가구면굴절력은?\n\n<R> S: -4.00 | C: -0.25 | A: 90\n    S: -4.00 | C: -0.50 | A: 95\n    S: -4.00 | C: -0.50 | A: 90\n-------------------------------\n    S: -4.00 | C: -0.50 | A: 90", "options": ["S -3.75 D", "S -4.00 D", "S -4.25 D", "S -4.50 D", "S -4.75 D"], "answer": 2 },
+        { "id": 29, "question": "29. 포롭터 보조렌즈의 용도로 옳은 것은?", "options": ["±.50: 억제검사", "P: 핀홀시력검사", "R) RL, L) GL: 조절래그검사", "R) RMV, L) WMV: 회선사위검사", "R) 6ΔU, L) 10ΔI: 노안가입도검사"], "answer": 3 },
+        { "id": 30, "question": "30. 크로스실린더렌즈를 이용하여 가입도검사를 할 때 필요한 시표는?", "diagram": "cross_cyl_target", "options": ["①번 시표", "②번 시표", "③번 시표", "④번 시표", "⑤번 시표"], "answer": 0 },
+        { "id": 31, "question": "31. 피검사자가 운무상태에서 방사선시표를 보았을 때, 5시 방향의 선이 선명하다고 했다. 교정 (-)원주렌즈의 축방향은?", "options": ["60°", "90°", "120°", "150°", "180°"], "answer": 3 },
+        { "id": 32, "question": "32. 다음 그림은 포롭터의 크로스실린더렌즈를 이용한 검사이다. 검사하고자 하는 것은?", "diagram": "cross_cyl_test", "options": ["양안조절균형", "난시량 정밀교정", "난시축 정밀교정", "원용 구면굴절력", "근용 구면굴절력"], "answer": 2 },
+        { "id": 33, "question": "33. 편광법을 이용한 양안조절균형검사를 하기 위해 운무한 결과가 다음과 같다. 시표의 선명도를 비교한 결과 우안보다 좌안이 더 선명하였다. 렌즈굴절력 조정으로 옳은 것은?\n\n• OD: S -3.00 D | OS: S -2.00 D", "options": ["OD: S -2.75 D로 조정", "OD: S -3.50 D로 조정", "OS: S -1.75 D로 조정", "OS: S -2.50 D로 조정", "OD: S -3.50 D, OS: S -2.50 D로 조정"], "answer": 1 },
+        { "id": 34, "question": "34. 다음 편광시표의 용도는?", "diagram": "polaroid_target", "options": ["시야검사", "색각검사", "조절래그검사", "안구운동검사", "양안조절균형검사"], "answer": 4 },
+        { "id": 35, "question": "35. 크로스실린더렌즈(±0.50 D)와 격자시표를 이용하여 정시안의 노안가입도를 검사하였다. 격자시표의 수평선이 더 진하다고 하였을 때 추가해야 할 렌즈는? (단, 검사거리 40 cm, 크로스실린더렌즈 (-)축을 90°로 가입함)", "options": ["S +0.25 D", "S -0.25 D", "S -0.50 D", "C +0.50 D", "C -0.50 D"], "answer": 0 },
+        { "id": 36, "question": "36. 최대조절력이 2.00 D인 정시안의 작업거리가 40 cm일 때 요구되는 가입도는? (단, 유용조절력은 최대조절력의 1/2임)", "options": ["S +1.25 D", "S +1.50 D", "S +1.75 D", "S +2.00 D", "S +2.25 D"], "answer": 1 },
+        { "id": 37, "question": "37. 다음 설명에 해당하는 안구운동검사는?\n\n• 안구운동의 속도는 초당 약 30~60°이다.\n• 주시하는 물체의 상이 중심와에 계속 유지되도록 한다.\n• 움직이는 물체를 연속적으로 선명하게 볼 수 있도록 한다.", "options": ["4ΔBO검사(4ΔBO test)", "이향운동검사(vergence test)", "발육성안구운동검사(DEM test)", "추종안구운동검사(pursuit movement test)", "충동안구운동검사(saccadic movement test)"], "answer": 3 },
+        { "id": 38, "question": "38. 단안가림검사를 하였을 때 양안에 움직임이 없었고, 왼쪽 눈을 가렸다가 떼었을 때 왼쪽 눈알이 코쪽으로 움직였다. 안위상태는?", "diagram": "cover_test_move", "options": ["내사위", "외사위", "내사시", "외사시", "상사위"], "answer": 1 },
+        { "id": 39, "question": "39. (±)렌즈플리퍼를 이용한 단안조절용이성검사에서 (-)구면렌즈를 대었을 때 선명하게 보기가 어려워서 기댓값보다 낮게 측정되었다. 예상되는 시기능이상은?", "options": ["개산과다", "개산부족", "조절과다", "조절부족", "폭주부족"], "answer": 3 },
+        { "id": 40, "question": "40. 검사결과가 다음과 같을 때 헤테로포리아법에 의한 계산 AC/A비는?\n\n• 원거리 사위량: 1 Δ 외사위 | 근거리 사위량: 6 Δ 외사위\n• 원용 PD: 60 mm | 근거리 사위량 측정거리: 40 cm", "options": ["3 Δ/D", "4 Δ/D", "5 Δ/D", "6 Δ/D", "7 Δ/D"], "answer": 4 },
+        { "id": 41, "question": "41. 워쓰4점검사에서 양안에 보이는 상태가 그림과 같다면 결과는? (우안: 적색렌즈, 좌안: 녹색렌즈 가입)", "diagram": "worth_4_dot_result", "options": ["정위", "외사위", "내사위", "우안억제", "좌안억제"], "answer": 0 },
+        { "id": 42, "question": "42. 외안부 전체와 콘택트렌즈의 움직임을 관찰하기에 적합한 세극등현미경 조명법은?", "options": ["역조명법", "공막산란법", "경면반사법", "확산조명법", "간접조명법"], "answer": 3 },
+        { "id": 43, "question": "43. 소프트콘택트렌즈 착용 상태가 다음과 같다. 옳은 것은?\n\n• 양호한 중심잡기 | 눈을 깜빡인 후 더 선명한 시력\n• 불규칙한 각막곡률계(keratometer) 마이어상", "options": ["양호한 피팅상태", "(-)눈물렌즈 효과", "과도한 렌즈 움직임", "루즈(loose) 피팅상태", "타이트(tight) 피팅상태"], "answer": 4 },
+        { "id": 44, "question": "44. 하드콘택트렌즈 피팅을 위한 검사값이다. 시험렌즈 피팅 후 예상되는 눈물렌즈는?\n\n• 안경교정굴절력: S -3.00 D\n• 각막곡률측정값: 7.5 mm(45.00 D) @ 180° / 7.5 mm(45.00 D) @ 90°\n• 시험렌즈 베이스커브: 7.6 mm", "options": ["S -0.50 D", "S -1.00 D", "S -1.50 D", "S -2.00 D", "S -2.50 D"], "answer": 0 },
+        { "id": 45, "question": "45. 하드콘택트렌즈의 피팅 후 조정법으로 옳은 것은?", "options": ["플랫(flat) 피팅상태이면 광학부직경을 크게 한다.", "스티프(steep) 피팅상태이면 전체직경을 크게 한다.", "플랫(flat) 피팅상태이면 주변부커브 폭을 넓게 한다.", "스티프(steep) 피팅상태이면 베이스커브의 곡률반경을 짧게 한다.", "최초 베이스커브 결정은 각막 강주경선 곡률반경을 기준으로 한다."], "answer": 0 },
+        { "id": 46, "question": "46. 콘택트렌즈 관리용액에 함유된 폴리쿼드(polyquad)의 역할은?", "options": ["완충제", "살균제", "계면활성제", "삼투압조절제", "단백질 분해효소"], "answer": 1 },
+        { "id": 47, "question": "47. 처방값이 S -3.50 D ⌒ C -1.50 D Ax 160°인 눈에 소프트 토릭콘택트렌즈를 피팅하였을 때 피팅상태는 양호하였고 참고 마크(레이저 마킹)가 시계방향으로 20° 회전되었다. 다시 처방해야 할 난시축 방향은?", "options": ["100°", "120°", "140°", "160°", "180°"], "answer": 2 },
+        { "id": 48, "question": "48. S -7.00 D의 완전교정 안경을 착용하는 사람의 콘택트렌즈 처방 굴절력은? (정점간거리는 12 mm)", "options": ["S -6.50 D", "S -7.00 D", "S -7.50 D", "S -8.00 D", "S -8.50 D"], "answer": 0 },
+        { "id": 49, "question": "49. 바탕(소지)금속과 밀착성이 우수하여 예비도금으로 사용되는 금속은?", "options": ["은(Ag)", "백금(Pt)", "니켈(Ni)", "로듐(Rh)", "팔라듐(Pd)"], "answer": 2 },
+        { "id": 50, "question": "50. 안경테용 금속재료 중 피부 알레르기를 일으킬 수 있는 니켈을 주성분으로 하는 합금은?", "options": ["황동(brass)", "모넬(monel)", "양백(nickel silver)", "두랄루민(duralumin)", "스테인리스강(stainless steel)"], "answer": 1 },
+        { "id": 51, "question": "51. Ti-IP로 표기된 안경테의 도금에 관한 설명으로 옳은 것은?", "options": ["액체 폐기물이 발생한다.", "전기를 사용하지 않는다.", "초경질 피막을 얻을 수 있다.", "도금액의 온도조절이 필요하다.", "도금액을 제거하기 위해 세척이 필요하다."], "answer": 2 },
+        { "id": 52, "question": "52. 다음과 같은 특징을 가지는 안경테 재료는?\n\n• 장뇌를 가소제로 사용 | 130°C 이상 가열하면 내부 기포 발생\n• 사출성형법으로 제조", "options": ["에폭시(epoxy)", "우레탄(urethane)", "탄화규소(whisker)", "셀룰로이드(celluloid)", "탄소섬유(carbon fiber)"], "answer": 3 },
+        { "id": 53, "question": "53. 액상의 단량체(monomer)를 중합반응에 의해 경화시켜 만드는 안경테 소재에 관한 설명으로 옳은 것은?", "options": ["에폭시가 해당된다.", "촉매로 황산을 사용한다.", "천연섬유를 이용하여 만든다.", "고체 상태에서 열을 가하면 액체가 된다.", "자외선에 노출 시 셀룰로이드보다 쉽게 변색된다."], "answer": 0 },
+        { "id": 54, "question": "54. 다음과 같은 특징을 갖는 안경테 재료는?\n\n• 주원료: 천연섬유소 | 반응물: 빙초산\n• 특성: 자외선에 거의 변색되지 않음", "options": ["에폭시(epoxy)", "폴리아미드(polyamide)", "폴리우레탄(polyurethane)", "폴리에테르이External미드(polyetherimide)", "셀룰로오스 아세테이트(cellulose acetate)"], "answer": 4 },
+        { "id": 55, "question": "55. 주변 환경에 따라 빛의 투과량이 변하는 렌즈에 관한 설명으로 옳은 것은?", "options": ["융착착색법으로 제조된다.", "유리렌즈에 금을 첨가하여 만든다.", "굴절률이 높을수록 착색 농도가 높다.", "주변 온도가 높을수록 착색 농도가 높다.", "자외선이 많을수록 빛 투과율이 낮아진다."], "answer": 4 },
+        { "id": 56, "question": "56. 가시광선의 모든 파장을 같은 정도로 흡수하여 물체의 색상을 자연스럽게 구분하기를 원하는 고객에게 적절한 착색 렌즈는?", "options": ["회색렌즈", "갈색렌즈", "적색렌즈", "황색렌즈", "자색렌즈"], "answer": 0 },
+        { "id": 57, "question": "57. 단일(동일)재질형 이중초점렌즈에서 모렌즈와 자렌즈의 차이점은?", "options": ["굴절률", "반사율", "아베수", "투과율", "곡률반경"], "answer": 4 },
+        { "id": 58, "question": "58. 특정방향으로 진동하는 빛의 양을 줄여 눈부심을 줄일 수 있는 안경렌즈는?", "options": ["감광렌즈", "편광렌즈", "사이즈렌즈", "자외선차단렌즈", "프레넬막프리즘렌즈"], "answer": 1 },
+        { "id": 59, "question": "59. 구면렌즈와 비교하여 비구면렌즈의 특징은?", "options": ["비중 감소", "굴절률 증가", "아베수 증가", "왜곡수차 감소", "빛 반사율 감소"], "answer": 3 },
+        { "id": 60, "question": "60. 빛의 간섭 현상을 이용하여 가시광선 투과율을 높이는 안경렌즈 코팅은?", "options": ["내열코팅", "반사방지코팅", "오염방지코팅", "김서림방지코팅", "전자파차단코팅"], "answer": 1 }
+    ];
+
+    let userAnswers = new Array(testData.length).fill(null);
+    let currentQuestionIndex = 0;
+    let totalSeconds = 0;
+    let timerInterval = null;
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${minutes}:${seconds}`;
+        }, 1000);
+    }
+
+    function stopTimer() { clearInterval(timerInterval); }
+
+    function buildOMRGrid() {
+        const container = document.getElementById('omr-grid-container');
+        container.innerHTML = '';
+        testData.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'omr-btn';
+            btn.id = `omr-btn-${idx}`;
+            btn.innerText = idx + 1;
+            btn.onclick = () => goToQuestion(idx);
+            container.appendChild(btn);
+        });
+        updateOMRGrid();
+    }
+
+    function updateOMRGrid() {
+        testData.forEach((_, idx) => {
+            const btn = document.getElementById(`omr-btn-${idx}`);
+            if (!btn) return;
+            if (userAnswers[idx] !== null) btn.classList.add('answered');
+            else btn.classList.remove('answered');
+            if (idx === currentQuestionIndex) btn.classList.add('current');
+            else btn.classList.remove('current');
+        });
+    }
+
+    function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        updateOMRGrid();
+    }
+
+    // 🛠️ 대화형 안광학 벡터 그래픽 시표 시뮬레이션 렌더링 엔진
+    function renderDiagram(type) {
+        const area = document.getElementById('diagram-area');
+        area.innerHTML = '';
+        if (!type) return;
+
+        const container = document.createElement('div');
+        container.className = 'diagram-container';
+
+        if (type === 'inset_shift') {
+            container.innerHTML = `<svg width="200" height="90">
+                <rect x="15" y="10" width="170" height="60" rx="4" fill="none" stroke="#333" stroke-width="2"/>
+                <line x1="100" y1="10" x2="100" y2="70" stroke="#ff0000" stroke-width="1.5" stroke-dasharray="3"/>
+                <circle cx="85" cy="40" r="5" fill="#2b8a3e"/>
+                <line x1="100" y1="40" x2="85" y2="40" stroke="#2b8a3e" stroke-width="2"/>
+                <text x="110" y="45" font-size="12" fill="#333">← 코방향 3mm</text>
+            </svg><br><span style="font-size:0.85em;color:#555;">[형판 기준점 대비 내면설계점 편위 도해]</span>`;
+        } else if (type === 'envelope_lens') {
+            container.innerHTML = `<div style="display:flex; gap:10px; justify-content:center;">
+                <div class="lens-axis-circle"><div class="axis-line" style="transform: rotate(45deg);"></div><div class="axis-line red" style="transform: rotate(135deg);"></div><div class="target-dot"></div><span style="position:absolute; bottom:5px; left:40%;">②번</span></div>
+            </div>`;
+        } else if (type === 'lensmeter_read') {
+            container.innerHTML = `<div class="lens-axis-circle">
+                <div class="grid-circle" style="width:50px;height:50px;"></div>
+                <div class="grid-circle" style="width:100px;height:100px;"></div>
+                <div class="axis-line" style="transform: rotate(0deg); background:#2b8a3e; height:1px;"></div>
+                <div class="axis-line red" style="transform: rotate(180deg); height:3px;"></div>
+            </div><br><span style="font-size:0.85em;color:#555;">[주경선 측정 타깃선 정렬 상태]</span>`;
+        } else if (type === 'bifocal_oh') {
+            container.innerHTML = `<svg width="180" height="100">
+                <path d="M 20,20 Q 90,5 160,20 L 150,80 Q 90,95 30,80 Z" fill="none" stroke="#333" stroke-width="2"/>
+                <path d="M 50,55 Q 90,45 130,55 Q 90,85 50,55" fill="#f1f3f5" stroke="#0056b3" stroke-width="1.5"/>
+                <line x1="20" y1="55" x2="160" y2="55" stroke="#666" stroke-dasharray="2"/>
+                <text x="75" y="40" font-size="11" fill="#0056b3">자렌즈 상부</text>
+            </svg>`;
+        } else if (type === 'mirror_test') {
+            container.innerHTML = `<svg width="200" height="80">
+                <circle cx="60" cy="40" r="25" fill="none" stroke="#444"/>
+                <circle cx="140" cy="40" r="25" fill="none" stroke="#444"/>
+                <circle cx="68" cy="40" r="6" fill="#0056b3"/>
+                <circle cx="132" cy="40" r="6" fill="#0056b3"/>
+                <text x="45" y="75" font-size="11" fill="#d9534f">근용 안쪽 치우침</text>
+            </svg>`;
+        } else if (type === 'cross_cyl_target') {
+            container.innerHTML = `<svg width="120" height="120">
+                <line x1="10" y1="60" x2="110" y2="60" stroke="#333" stroke-width="2"/>
+                <line x1="60" y1="10" x2="60" y2="110" stroke="#333" stroke-width="2"/>
+                <circle cx="60" cy="60" r="40" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="4"/>
+                <text x="52" y="118" font-size="12" font-weight="bold">①번</text>
+            </svg><br><span style="font-size:0.85em;color:#555;">[크로스 실린더 정밀 십자 격자 시표]</span>`;
+        } else if (type === 'cross_cyl_test') {
+            container.innerHTML = `<div class="lens-axis-circle">
+                <div class="axis-line" style="transform: rotate(45deg); background:#aaa;"></div>
+                <div class="axis-line red" style="transform: rotate(135deg); height:2px;"></div>
+                <text x="10" y="20" font-size="10" fill="#d9534f">(-)축 반전선</text>
+            </div>`;
+        } else if (type === 'polaroid_target') {
+            container.innerHTML = `<svg width="140" height="100">
+                <rect x="20" y="10" width="100" height="80" fill="#f8f9fa" stroke="#333"/>
+                <text x="35" y="45" font-size="14" fill="#333" style="letter-spacing:5px;">오른쪽 시표</text>
+                <text x="35" y="70" font-size="14" fill="#666" style="letter-spacing:5px; opacity:0.4;">왼쪽 차폐</text>
+            </svg>`;
+        } else if (type === 'cover_test_move') {
+            container.innerHTML = `<svg width="180" height="80">
+                <circle cx="90" cy="40" r="22" fill="#e9ecef" stroke="#333"/>
+                <circle cx="78" cy="40" r="8" fill="#212529"/>
+                <path d="M 82,40 L 94,40" stroke="#ff0000" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="65" y="75" font-size="11" fill="#333">가림 제거 후 코쪽 복귀</text>
+            </svg>`;
+        } else if (type === 'worth_4_dot_result') {
+            container.innerHTML = `<div style="width:110px;height:110px;background:#111;border-radius:50%;position:relative;display:inline-block;">
+                <circle cx="55" cy="22" r="8" fill="#ff3333"/>
+                <circle cx="30" cy="55" r="8" fill="#33ff33"/>
+                <circle cx="80" cy="55" r="8" fill="#33ff33"/>
+                <circle cx="55" cy="88" r="8" fill="#fff"/>
+            </div>`;
+        }
+        area.appendChild(container);
+    }
+
+    function loadQuestion() {
+        const qText = document.getElementById('question-text');
+        const optArea = document.getElementById('options-area');
+        const progressDisplay = document.getElementById('progress-display');
+        
+        document.getElementById('answer-display').innerText = '';
+        progressDisplay.innerText = `현재 진행률: ${currentQuestionIndex + 1} / ${testData.length} 문항`;
+        const currentQ = testData[currentQuestionIndex];
+        qText.innerText = currentQ.question;
+        
+        renderDiagram(currentQ.diagram);
+        optArea.innerHTML = '';
+
+        currentQ.options.forEach((opt, index) => {
+            const label = document.createElement('label');
+            const isChecked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+            label.innerHTML = `<input type="radio" name="option" value="${index}" ${isChecked} onchange="selectOption(${index})"> <strong>${index + 1}번.</strong> ${opt}`;
+            optArea.appendChild(label);
+        });
+        updateOMRGrid();
+    }
+
+    function showAnswer() {
+        if (currentQuestionIndex < testData.length) {
+            const currentQ = testData[currentQuestionIndex];
+            document.getElementById('answer-display').innerText = ` 정답: ${currentQ.answer + 1}번`;
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < testData.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        } else {
+            confirmSubmit();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        }
+    }
+
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        loadQuestion();
+    }
+
+    function confirmSubmit() {
+        const unansweredCount = userAnswers.filter(ans => ans === null).length;
+        let alertMsg = "시험을 최종 제출하시겠습니까?";
+        if (unansweredCount > 0) alertMsg = `미답변 문항이 ${unansweredCount}개 있습니다. 이대로 ${alertMsg}`;
+        if (confirm(alertMsg)) submitExam();
+    }
+
+    function submitExam() {
+        stopTimer();
+        let score = 0;
+        let incorrectQuestions = [];
+
+        testData.forEach((q, idx) => {
+            if (userAnswers[idx] === q.answer) score++;
+            else {
+                incorrectQuestions.push({
+                    id: q.id,
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswers[idx],
+                    correctAnswer: q.answer
+                });
+            }
+        });
+
+        document.getElementById('progress-display').innerText = "시험 종료";
+        let resultHTML = `<h3>📝 채점 결과</h3>`;
+        resultHTML += `<p style="font-size: 1.2em;">총 <strong>${testData.length}</strong>문항 중 <strong>${score}</strong>문항 맞추셨습니다!</p><hr>`;
+        
+        if (incorrectQuestions.length > 0) {
+            resultHTML += `<h3 style="color:#d9534f;">❌ 오답 노트를 확인하고 보완하세요</h3>`;
+            incorrectQuestions.forEach((q) => {
+                const userAnsText = q.userAnswer !== null ? `(${q.userAnswer + 1}번) ${q.options[q.userAnswer]}` : "선택 안 함";
+                resultHTML += `
+                    <div class="wrong-box">
+                        <div class="wrong-title">${q.question}</div>
+                        <div class="my-ans">❌ 선택한 답: ${userAnsText}</div>
+                        <div class="correct-ans">⭕ 정답: (${q.correctAnswer + 1}번) ${q.options[q.correctAnswer]}</div>
+                    </div>`;
+            });
+        } else {
+            resultHTML += `<h3 style="color:#2b8a3e;">🎉 축하합니다! 완벽하게 마스터하셨습니다!</h3>`;
+        }
+        document.getElementById('quiz-area').innerHTML = resultHTML;
+    }
+
+    /* --- 계산기 수식 안전 엔진 --- */
+    let calcExpression = '';
+    const screen = document.getElementById('calc-screen');
+    function appendCalc(val) {
+        if (screen.value === '0' && !isNaN(val)) calcExpression = val;
+        else calcExpression += val;
+        screen.value = calcExpression;
+    }
+    function clearCalc() { calcExpression = ''; screen.value = '0'; }
+    function calculate() {
+        try {
+            const sanitized = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+            const res = new Function(`return (${sanitized})`)();
+            screen.value = Number(res.toFixed(4));
+            calcExpression = screen.value;
+        } catch (e) { screen.value = '오류'; calcExpression = ''; }
+    }
+
+    // 초기화 및 가동
+    buildOMRGrid();
+    loadQuestion();
+    startTimer();
+</script>
+</body>
+</html>
