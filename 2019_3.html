@@ -131,7 +131,7 @@
                 <button class="calc-btn" onclick="appendCalc('3')">3</button>
                 <button class="calc-btn" onclick="appendCalc('0')">0</button>
                 
-                <button class="calc-btn" onclick="calculate()">=</button>
+                <button class="calc-btn equal" onclick="calculate()">=</button>
             </div>
         </div>
     </div>
@@ -181,4 +181,521 @@
         },
         {
             "question": "9. 다음 그림은 렌즈미터 스크린 상이다. 굴절력 표기는?\n<자료(비공개)>",
-            "options":
+            "options": ["S -2.00 D ⌒ C -3.00 D Ax 90°", "S -2.00 D ⌒ C -3.00 D Ax 180°", "S -5.00 D ⌒ C -2.00 D Ax 90°", "S -5.00 D ⌒ C +2.00 D Ax 180°", "S -5.00 D ⌒ C -1.00 D Ax 90°"],
+            "answer": 2
+        },
+        {
+            "question": "10. C -2.50 D Ax 10° ⌒ C -0.50 D Ax 100°와 굴절력이 같은 렌즈는?",
+            "options": ["S -0.50 D ⌒ C -2.00 D Ax 10°", "S -0.50 D ⌒ C -2.00 D Ax 100°", "S -0.50 D ⌒ C -1.00 D Ax 10°", "S -2.50 D ⌒ C -0.50 D Ax 100°", "S -2.50 D ⌒ C -0.50 D Ax 10°"],
+            "answer": 0
+        },
+        {
+            "question": "11. 다음은 렌즈미터 스크린 상이다. 렌즈의 굴절력과 프리즘은?\n\n• 선명 초선방향: 60°: +1.00 D, 150°: +2.00 D\n• 타깃의 위치: 스크린 중심에서 30° 방향으로 두 칸 떨어진 곳",
+            "options": ["S +1.00 D ⌒ C +1.00 D Ax 60° ⌒ 2.0Δ Base 30°", "S +1.00 D ⌒ C +1.00 D Ax 150° ⌒ 2.0Δ Base 30°", "S +2.00 D ⌒ C -1.00 D Ax 60° ⌒ 2.0Δ Base 210°", "S +2.00 D ⌒ C -1.00 D Ax 60° ⌒ 2.0Δ Base 210°", "S +2.00 D ⌒ C -2.00 D Ax 30° ⌒ 2.0Δ Base 30°"],
+            "answer": 1
+        },
+        {
+            "question": "12. S -4.00 D인 렌즈의 광학중심점에서 위로 2 mm 위치에 동공이 있다면 눈에 미치는 프리즘 영향은?",
+            "options": ["0.2Δ BU", "0.4Δ BU", "0.8Δ BU", "4.0Δ BD", "8.0Δ BD"],
+            "answer": 2
+        },
+        {
+            "question": "13. 다음 처방으로 완성된 안경의 광학중심간거리가 64 mm로 조제가공 되었다. 양안에 미치는 프리즘 영향은?\n\n• OU: S -6.00 D ⌒ C +2.00 D Ax 90°\n• 양안 기준 PD: 60 mm",
+            "options": ["1.6Δ BI", "1.6Δ BO", "2.4Δ BI", "2.4Δ BO", "3.2Δ BI"],
+            "answer": 1
+        },
+        {
+            "question": "14. 원용 OU: S -4.00 D ⌒ C -1.00 D Ax 180°, 측정기준 PD 64 mm의 처방으로 완성된 안경의 광학중심간거리가 다음과 같을 때 허용오차 범위에 들어가는 것은?\n\n• 허용오차가 큰 범위: 1.0Δ\n• 허용오차가 작은 범위: 0.5Δ",
+            "options": ["60 mm", "62 mm", "66 mm", "68 mm", "70 mm"],
+            "answer": 2
+        },
+        {
+            "question": "15. 다음 처방에서 조제가공 Oh는?\n\n• OS: S +5.00 D ⌒ 1.0Δ BD\n• 기준 Oh: 20 mm (단, 경사각 0° 자세에서 측정함)",
+            "options": ["14 mm", "16 mm", "18 mm", "22 mm", "24 mm"],
+            "answer": 3
+        },
+        {
+            "question": "16. 다음과 같은 처방으로 뒷걸림테 안경을 만들 때 뒤렌즈의 굴절력과 조제가공 PD는?\n\n• 원용 OU: S -1.00 D, 양안 기준 PD: 64 mm\n• 근용 OU: S +2.00 D, 양안 기준 PD: 58 mm\n• 원용: 앞렌즈\n• 근용: 앞렌즈 + 뒤렌즈",
+            "options": ["+2.00 D, 58 mm", "+2.00 D, 60 mm", "+3.00 D, 58 mm", "+3.00 D, 60 mm", "+3.00 D, 62 mm"],
+            "answer": 2
+        },
+        {
+            "question": "17. 다음과 같은 처방으로 알바이트테 안경을 만들 때 앞렌즈의 굴절력은?\n\n• 원용 OU: S -1.00 D ⌒ C -2.00 D Ax 180°, 양안 기준 PD: 64 mm\n• 근용 OU: S +1.00 D ⌒ C +2.00 D Ax 90°, 양안 기준 PD: 60 mm\n• 원용: 앞렌즈 + 뒤렌즈\n• 근용: 뒤렌즈",
+            "options": ["S +1.00 D", "S +4.00 D", "S -1.00 D", "S -2.00 D", "S -4.00 D"],
+            "answer": 3
+        },
+        {
+            "question": "18. 일반 금속테의 엔드피스에 해당하는 무테의 부분은?",
+            "options": ["경첩(hinge)", "다리(temple)", "연결부(bridge)", "패드 암(pad arm)", "렌즈고정금대(strap)"],
+            "answer": 4
+        },
+        {
+            "question": "19. 이중초점렌즈 설계에서 표준 광학중심 높이는 안경테의 하부림에서 어디까지인가?",
+            "options": ["수평시 자세에서 동공중심까지", "수평시 자세에서 기하중심까지", "경사각 0° 자세에서 하부동공연까지", "경사각 0° 자세에서 상부동공연까지", "경사각 0° 자세에서 하안검 또는 하부각막융기부까지"],
+            "answer": 4
+        },
+        {
+            "question": "20. 3중초점렌즈를 조제가공 할 때, 수직높이 설계점의 기준 위치는?",
+            "options": ["근용 광학중심점", "원용 광학중심점", "근용부 상부경계선", "중간거리부 상부경계선", "근용부 합성광학중심점"],
+            "answer": 3
+        },
+        {
+            "question": "21. 다음의 안경처방에서 근용처방 값은?\n\n• 원용 OU: S -1.75 D ⌒ C -0.25 D Ax 60°, Add 0.75 D",
+            "options": ["S -1.00 D ⌒ C -0.25 D Ax 150°", "S -1.00 D ⌒ C -0.50 D Ax 60°", "S -1.00 D ⌒ C +0.50 D Ax 150°", "S -1.25 D ⌒ C -0.25 D Ax 60°", "S -1.25 D ⌒ C +0.25 D Ax 150°"],
+            "answer": 0
+        },
+        {
+            "question": "22. 다음 그림과 같은 이중초점렌즈의 조제가공을 위한 설계점은?\n<자료(비공개)>",
+            "options": ["원용부 광학중심점", "원용부 기하중심점", "근용부 광학중심점", "근용부 자렌즈의 기하중심점", "근용부 자렌즈의 상부경계선 중앙점"],
+            "answer": 4
+        },
+        {
+            "question": "23. 원용굴절력이 S 0.00 D이고, 가입도가 1.00 D인 이중초점렌즈의 합성광학중심점 위치는?\n<자료(비공개)>",
+            "options": ["a", "b", "c", "d", "e"],
+            "answer": 2
+        },
+        {
+            "question": "24. 누진굴절력렌즈의 원용굴절력을 측정하는 위치는?\n<자료(비공개)>",
+            "options": ["a", "b", "c", "d", "e"],
+            "answer": 4
+        },
+        {
+            "question": "25. 원거리 나안시력 측정값은 1.0이었다. S +0.50 D를 눈 앞에 부가하니 시력 변화가 없었다. 다음 단계는?",
+            "options": ["근시 검사가 필요하다.", "원시 검사가 필요하다.", "색각시 검사가 필요하다.", "입체시 검사가 필요하다.", "추가 굴절검사는 필요 없다."],
+            "answer": 1
+        },
+        {
+            "question": "26. 가림검사에서 우안을 가렸을 때 좌안이 귀쪽 방향으로 움직였고, 좌안을 가렸을 때 우안은 움직임이 없었다. 안위이상은?",
+            "options": ["내사위", "외사위", "교대사시", "좌안 내사시", "좌안 외사시"],
+            "answer": 3
+        },
+        {
+            "question": "27. 다음 내용은 포롭터를 사용한 검영법을 시행한 결과이다. 교정렌즈 굴절력은? (단, 검사거리보정렌즈를 포함함)\n\n• 입사선조광 방향 90° -> 중화 굴절력 S +1.00 D\n• 입사선조광 방향 180° -> 중화 굴절력 S +2.00 D",
+            "options": ["C -1.00 D Ax 90°", "C -1.00 D Ax 180°", "S +1.00 D ⌒ C -2.00 D Ax 180°", "S +1.00 D ⌒ C -1.00 D Ax 180°", "S +2.00 D ⌒ C -1.00 D Ax 90°"],
+            "answer": 4
+        },
+        {
+            "question": "28. 50 cm 검사거리에서 검영법을 실시하였다. S -2.50 D를 부가할 때 중화되었다면 교정렌즈 굴절력은? (단, 검사거리보정렌즈를 사용하지 않음)",
+            "options": ["-1.50 D", "-3.00 D", "-4.50 D", "-6.00 D", "-7.50 D"],
+            "answer": 2
+        },
+        {
+            "question": "29. 자각적굴절검사를 실시할 때 난시를 교정하기 위해 사용하는 렌즈는?",
+            "options": ["평면렌즈", "편광렌즈", "원주렌즈", "적색렌즈", "프리즘렌즈"],
+            "answer": 2
+        },
+        {
+            "question": "30. 운무 상태에서 난시를 교정하려고 한다. 이때 눈의 상태는?",
+            "options": ["혼합난시", "원시성난시", "생리적난시", "근시성난시", "주경선균형"],
+            "answer": 3
+        },
+        {
+            "question": "31. 운무법을 이용한 난시검사에서 운무상태인 피검자가 방사선시표의 3시 방향 선이 선명하다고 대답하였다. 난시의 종류는?",
+            "options": ["원시성 복성 직난시", "원시성 단성 사난시", "근시성 단성 도난시", "근시성 복성 직난시", "근시성 단성 사난시"],
+            "answer": 2
+        },
+        {
+            "question": "32. 적록검사를 이용하여 단안 굴절력 정밀검사를 실시하고 있다. 적색바탕의 시표가 더 선명하게 보였을 경우, 다음 단계는?",
+            "options": ["(+)구면굴절력을 추가한다.", "(-)구면굴절력을 추가한다.", "(+)원주굴절력을 추가한다.", "(-)원주굴절력을 추가한다.", "굴절력이 정확하므로 검사를 종료한다."],
+            "answer": 1
+        },
+        {
+            "question": "33. 다음은 크로스실린더렌즈를 사용한 난시 정밀검사의 그림이다. 반전비교 결과, 그림 (가)보다 그림 (나)에서 더 선명하였다고 대답했을 때 조정으로 옳은 것은? (단, 포롭터에는 S -6.25 D ⌒ C -3.50 D Ax 90°로 가입되어 있음)\n\n<자료(비공개)> (가)  /  <자료(비공개)> (나)",
+            "options": ["S -6.25 D ⌒ C -3.25 D Ax 90°", "S -6.25 D ⌒ C -3.75 D Ax 90°", "S -6.00 D ⌒ C -4.00 D Ax 85°", "S -6.25 D ⌒ C -3.50 D Ax 85°", "S -6.25 D ⌒ C -3.50 D Ax 95°"],
+            "answer": 4
+        },
+        {
+            "question": "34. 다음은 편광렌즈를 이용한 양안균형검사 그림이다. 양안으로 봤을 때 그림처럼 위쪽보다 아래쪽 시표가 더 선명하다고 대답하였다. 옳은 설명은? (단, 우안은 위의 두 줄을 인식하고, 좌안은 아래의 두 줄을 인식함)\n<자료(비공개)>",
+            "options": ["양안균형이 이루어진 상태이다.", "단안 굴절검사에서 우안에 조절이 개입되었다.", "단안 굴절검사에서 좌안에 조절 개입 가능성은 없다.", "좌안에 S +0.25 D를 가입한 후 시표의 선명도를 묻는다.", "우안에 S +0.25 D를 가입한 후 시표의 선명도를 묻는다."],
+            "answer": 4
+        },
+        {
+            "question": "35. 원용 완전교정 상태에서 포롭터의 '±0.50' 보조렌즈를 사용하여 눈 앞 40 cm에 다음의 시표를 보여주고 실시하는 검사는?\n<자료(비공개)>",
+            "options": ["색각 검사", "억제 검사", "사시 검사", "가입도 검사", "부등상시 검사"],
+            "answer": 3
+        },
+        {
+            "question": "36. 적록시표를 이용한 가입도 검사에서 원용 완전교정값 S +1.00 D에 S +2.00 D를 추가하였더니 적색과 녹색 바탕의 시표 선명도가 같아졌다. 잠정적(이론적) 가입도는?",
+            "options": ["+1.00 D", "+1.50 D", "+2.00 D", "+2.50 D", "+3.00 D"],
+            "answer": 2
+        },
+        {
+            "question": "37. 다음 내용과 관련 있는 양안 안구운동 검사는?\n\n• 물체를 주시하기 위한 가장 빠른 안구운동\n• 독서할 때 관여하는 안구운동",
+            "options": ["홱보기검사", "정적시야검사", "각막반사검사", "주시사차검사", "이상망막대응검사"],
+            "answer": 0
+        },
+        {
+            "question": "38. 폰그레페(von Graefe)법으로 원거리 수평사위검사를 하려고 한다. 가입해야 할 포롭터의 보조렌즈는?",
+            "options": ["R: RMH, L: O", "R: RMV, L: O", "R: 6ΔU, L: O", "R: O, L: 10ΔO", "R: 10ΔI, L: 10ΔO"],
+            "answer": 2
+        },
+        {
+            "question": "39. 다음 내용은 포롭터를 이용한 검사 결과 값이다. 음성상대조절력(NRA)은?",
+            "options": ["-0.50 D", "+0.50 D", "+1.00 D", "+2.00 D", "+3.00 D"],
+            "answer": 3
+        },
+        {
+            "question": "40. 근거리 수직 문자시표를 주시하게 하고 프리즘렌즈를 기저외방(BO)으로 부가하여 시표 흐림이 지속되기 시작하였을 때까지 프리즘굴절력을 증가시켰다. 이 검사로 평가할 수 있는 것은?",
+            "options": ["조절성폭주(AC)", "음성상대폭주(NRC)", "양성상대폭주(PRC)", "음성상대조절(NRA)", "양성상대조절(PRA)"],
+            "answer": 2
+        },
+        {
+            "question": "41. 다음 그림은 워쓰4점검사(Worth 4 dots test)의 결과이다. 눈의 상태는? (단, 우안은 적색, 좌안은 녹색인 적록안경을 착용함)\n<자료(비공개)>",
+            "options": ["동측성복시에 의한 내사시", "동측성복시에 의한 외사시", "교차성복시에 의한 내사시", "교차성복시에 의한 외사시", "교차성복시에 의한 교대사시"],
+            "answer": 3
+        },
+        {
+            "question": "42. 세극등 현미경 검사에서 각막내피세포의 형태변화를 관찰할 수 있는 조명법은?",
+            "options": ["역조명(retro illumination)", "간접조명(indirect illumination)", "확산조명(diffuse illumination)", "공막산란조명(sclerotic scatter)", "경면반사조명(specular reflection)"],
+            "answer": 4
+        },
+        {
+            "question": "43. 소프트콘택트렌즈의 루즈한(loose) 피팅상태에 관한 설명으로 옳은 것은?",
+            "options": ["렌즈가 각막 중심에 잘 위치한다.", "눈 깜박임 직후에 시력이 일시적으로 흐려진다.", "푸시업(push-up) 검사에서 렌즈 움직임이 없다.", "콘택트렌즈에 의해 눌린 자국이 결막에 나타난다.", "눈을 깜박일 때 렌즈의 움직임이 없거나 매우 적다."],
+            "answer": 1
+        },
+        {
+            "question": "44. 다음과 같은 검사값을 가진 피검자에게 S -3.00 D, 베이스커브 7.80 mm의 RGP 구면콘택트렌즈를 시험착용 시켰다. 예상되는 덧댐굴절검사값은?\n\n• 안경교정굴절력: S -3.00 D ⌒ C -0.75 D Ax 180°\n• K-readings: 7.80 mm(43.00 D) @ 180° / 7.80 mm(43.00 D) @ 90°",
+            "options": ["C -0.25 D Ax 180°", "C -0.75 D Ax 180°", "C -1.25 D Ax 180°", "C -1.50 D Ax 180°", "S -1.00 D ⌒ C -0.50 D Ax 180°"],
+            "answer": 1
+        },
+        {
+            "question": "45. RGP 콘택트렌즈 시험착용 후 다음과 같은 결과를 보일 때 해결 방안은?\n\n• 안경교정굴절력: S -3.00 D\n• 시험렌즈굴절력: S -3.00 D\n• 안경착용 때보다 흐리게 보인다고 함\n• 렌즈 움직임이 적고, 결막 충혈이 관찰됨\n• 덧댐굴절검사값: S -0.50 D",
+            "options": ["전체직경을 증가시킨다.", "후면광학부 직경을 증가시킨다.", "후면주변부 커브 폭을 좁게 한다.", "후면주변부 곡률반경을 감소시킨다.", "후면광학부 곡률반경을 증가시킨다."],
+            "answer": 4
+        },
+        {
+            "question": "46. RGP 렌즈 관리용액에 포함된 습윤제(wetting agent)의 기능은?",
+            "options": ["렌즈 소독", "지방 제거", "단백질 제거", "누액의 산도(pH) 조절", "렌즈 표면 친수성 증가"],
+            "answer": 4
+        },
+        {
+            "question": "47. 노안교정을 위한 단안시(monovision) 처방으로 옳은 것은? (단, 우세안은 원용 안경 도수 조정에 따름)",
+            "options": ["양안에 근용처방을 한다.", "오른쪽 눈에 원용처방, 왼쪽 눈에 근용처방을 한다.", "오른쪽 눈에 근용처방, 왼쪽 눈에 원용처방을 한다.", "양안에 분절(segment)형 이중초점렌즈 처방을 한다.", "양안에 낮은 가입도의 비구면 멀티포컬렌즈 처방을 한다."],
+            "answer": 2
+        },
+        {
+            "question": "48. 각막난시가 심한 눈에 RGP 구면콘택트렌즈를 착용시켰을 때, 렌즈 굴곡(휘어짐, flexure)이 발생하였다. 해결 방법으로 옳은 것은?",
+            "options": ["전체직경을 증가시킨다.", "후면광학부 직경을 증가시킨다.", "렌즈중심부 두께를 감소시킨다.", "베이스커브를 더 스티프(steep)하게 한다.", "모듈러스(뻣뻣함, modulus)가 높은 재질을 사용한다."],
+            "answer": 4
+        },
+        {
+            "question": "49. 티타늄합금 안경테의 특성에 관한 설명으로 옳은 것은?",
+            "options": ["자성이 강하다.", "내부식성이 우수하다.", "피부에 알레르기를 유발한다.", "공기 중에서 땜질이 쉽게 된다.", "비중은 9.0으로 양백이나 모넬보다 무겁다."],
+            "answer": 1
+        },
+        {
+            "question": "50. 금속안경테 제조에 사용되는 땜납에 관한 설명으로 옳은 것은?",
+            "options": ["금납과 은납은 연납에 속한다.", "납과 주석의 합금은 경납에 속한다.", "은납의 접합강도는 접축면의 구조와 무관하다.", "땜납의 융점은 모금속의 융점보다 높아야 한다.", "땜납의 유동성을 향상시키기 위해 용제를 사용한다."],
+            "answer": 4
+        },
+        {
+            "question": "51. 금장(금피복) 안경테에 해당하는 것은?",
+            "options": ["1/20 IP", "1/20 22K GP", "1/20 14K GF", "1/20 20K EP", "1/20 14K GK"],
+            "answer": 2
+        },
+        {
+            "question": "52. 열경화성수지 안경테는?",
+            "options": ["아크릴레트", "에폭시시테", "셀룰로이드테", "아세테이트테", "폴리아미드테"],
+            "answer": 1
+        },
+        {
+            "question": "53. 셀룰로이드 안경테와 비교할 때 셀룰로오스 아세테이트(cellulose acetate) 안경테의 특성에 관한 설명으로 옳은 것은?",
+            "options": ["이연성을 갖는다.", "복원성이 우수하다.", "내충격성이 우수하다.", "비중이 6.0 정도로 높다.", "자외선에 의한 변색 가능성이 적다."],
+            "answer": 4
+        },
+        {
+            "question": "54. 주형중합법(mold casting)으로 제조되는 안경테 소재는?",
+            "options": ["폴리아미드(polyamide)", "에폭시수지(옵틸, epoxy resin)", "셀룰로오스 아세테이트(cellulose acetate)", "셀룰로오스 프로피오네이트(cellulose propionate)", "셀룰로오스 나이트레이트(셀룰로이드, cellulose nitrate)"],
+            "answer": 1
+        },
+        {
+            "question": "55. 다음 그림과 같은 분광투과율을 나타내는 안경렌즈 색상은?\n<자료(비공개)>",
+            "options": ["회색", "갈색", "파란색", "분홍색", "노란색"],
+            "answer": 2
+        },
+        {
+            "question": "56. 조광(변색)렌즈의 특성으로 옳은 것은?",
+            "options": ["조광성분을 렌즈표면에 코팅할 수 없다.", "탈색반응에 비해 착색반응의 속도가 느리다.", "착색반응은 약 370 nm의 자외선에서 가장 빠르다.", "동일한 조건이라면 기온이 높을수록 진하게 착색된다.", "플라스틱 조광렌즈는 내부 할로겐화합물의 반응에 의해 조광기능을 발휘한다."],
+            "answer": 2
+        },
+        {
+            "question": "57. 편광렌즈에 관한 설명으로 옳은 것은?",
+            "options": ["호수면이나 설원에서 눈부심을 감소시킨다.", "시력보정용 안경렌즈로 사용이 불가능하다.", "자외선 조사량에 따라 광투과율이 변화한다.", "낚시용 편광렌즈의 편광투과축은 45° 방향이다.", "좌우 편광렌즈의 편광투과축은 서로 90°가 되도록 만든다."],
+            "answer": 0
+        },
+        {
+            "question": "58. 큰 프리즘굴절력이 필요한 안위이상을 교정하기 위해 얇은 필름형태로 제작되는 렌즈는?",
+            "options": ["사이즈렌즈(size lens)", "이중초점렌즈(bifocal lens)", "조광렌즈(photochromic lens)", "슬랩 오프 가공렌즈(slab off lens)", "프레넬프리즘렌즈(Fresnel prism lens)"],
+            "answer": 4
+        },
+        {
+            "question": "59. 구면 안경렌즈와 비교할 때 비구면 안경렌즈의 특성으로 옳은 것은? (단, 그 외 렌즈 디자인 변수는 동일함)",
+            "options": ["주변부 시야가 좁아진다.", "동일굴절력일 경우 더 무거워진다.", "고구절률 렌즈일 경우 더 두꺼워진다.", "렌즈주변부의 왜곡수차를 감소시킨다.", "강도의 볼록렌즈에서 비점수차가 증가된다."],
+            "answer": 3
+        },
+        {
+            "question": "60. 반사방지막코팅에 관한 설명으로 옳은 것은?",
+            "options": ["빛의 간섭현상을 이용한다.", "코팅층 두께에 따른 반사색 변화가 없다.", "코팅물질과 렌즈의 굴절률은 같아야 한다.", "코팅층의 광학적 두께는 렌즈의 굴절률과 무관하다.", "코팅성분의 흡수 작용에 의해 자외선 투과율이 높아진다."],
+            "answer": 0
+        }
+    ];
+
+    let userAnswers = new Array(testData.length).fill(null);
+    let currentQuestionIndex = 0;
+    let totalSeconds = 0;
+    let timerInterval = null;
+
+    function startTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            const display = document.getElementById('timer-display');
+            if(display) display.innerText = `${minutes}:${seconds}`;
+            localStorage.setItem('cbt_total_seconds', totalSeconds);
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+    }
+
+    function buildOMRGrid() {
+        const container = document.getElementById('omr-grid-container');
+        if(!container) return;
+        container.innerHTML = '';
+        testData.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'omr-btn';
+            btn.id = `omr-btn-${idx}`;
+            btn.innerText = idx + 1;
+            btn.onclick = () => goToQuestion(idx);
+            container.appendChild(btn);
+        });
+        updateOMRGrid();
+    }
+
+    function updateOMRGrid() {
+        testData.forEach((_, idx) => {
+            const btn = document.getElementById(`omr-btn-${idx}`);
+            if (!btn) return;
+
+            if (userAnswers[idx] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.remove('answered');
+            }
+
+            if (idx === currentQuestionIndex) {
+                btn.classList.add('current');
+            } else {
+                btn.classList.remove('current');
+            }
+        });
+    }
+
+    function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        saveProgress();
+        updateOMRGrid();
+    }
+
+    function loadQuestion() {
+        const qText = document.getElementById('question-text');
+        const optArea = document.getElementById('options-area');
+        const progressDisplay = document.getElementById('progress-display');
+        const ansDisplay = document.getElementById('answer-display');
+        
+        if(ansDisplay) ansDisplay.innerText = '';
+        if(progressDisplay) progressDisplay.innerText = `현재 진행률: ${currentQuestionIndex + 1} / ${testData.length} 문항`;
+        
+        const currentQ = testData[currentQuestionIndex];
+        if(qText) qText.innerText = currentQ.question;
+        if(optArea) {
+            optArea.innerHTML = '';
+            currentQ.options.forEach((opt, index) => {
+                const label = document.createElement('label');
+                const isChecked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+                label.innerHTML = `<input type="radio" name="option" value="${index}" ${isChecked} onchange="selectOption(${index})"> <strong>${index + 1}번.</strong> ${opt}`;
+                optArea.appendChild(label);
+            });
+        }
+        updateOMRGrid();
+    }
+
+    function showAnswer() {
+        if (currentQuestionIndex < testData.length) {
+            const currentQ = testData[currentQuestionIndex];
+            const ansDisplay = document.getElementById('answer-display');
+            if(ansDisplay) ansDisplay.innerText = ` 정답: ${currentQ.answer + 1}번`;
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < testData.length - 1) {
+            currentQuestionIndex++;
+            saveProgress();
+            loadQuestion();
+        } else {
+            confirmSubmit();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            saveProgress();
+            loadQuestion();
+        }
+    }
+
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        saveProgress();
+        loadQuestion();
+    }
+
+    function confirmSubmit() {
+        const unansweredCount = userAnswers.filter(ans => ans === null).length;
+        let alertMsg = "시험을 최종 종료하고 제출하시겠습니까?";
+        if (unansweredCount > 0) {
+            alertMsg = `아직 답을 고르지 않은 문제가 ${unansweredCount}개 있습니다. 이대로 ${alertMsg}`;
+        }
+
+        if (confirm(alertMsg)) {
+            submitExam();
+        }
+    }
+
+    function submitExam() {
+        stopTimer();
+        
+        let score = 0;
+        let incorrectQuestions = [];
+
+        testData.forEach((q, idx) => {
+            if (userAnswers[idx] === q.answer) {
+                score++;
+            } else {
+                incorrectQuestions.push({
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswers[idx],
+                    correctAnswer: q.answer
+                });
+            }
+        });
+
+        const progressDisplay = document.getElementById('progress-display');
+        const timerDisplay = document.getElementById('timer-display');
+        if(progressDisplay) progressDisplay.innerText = "시험 종료";
+        
+        const timeSpent = timerDisplay ? timerDisplay.innerText : "00:00";
+        
+        let resultHTML = `<h3>📝 시험 결과</h3>`;
+        resultHTML += `<p style="font-size: 1.2em;">총 <strong>${testData.length}</strong>문제 중 <strong>${score}</strong>문제 맞혔습니다.</p>`;
+        resultHTML += `<p style="color: #666;">총 소요 시간: <strong>${timeSpent}</strong></p><hr>`;
+        
+        if (incorrectQuestions.length > 0) {
+            resultHTML += `<h3 style="color: #d9534f; margin-top: 25px;">❌ 틀린 문제 다시보기 (${incorrectQuestions.length}문항)</h3>`;
+            incorrectQuestions.forEach((q) => {
+                const userAnsText = q.userAnswer !== null ? `(선택 ${q.userAnswer + 1}) ${q.options[q.userAnswer]}` : "선택 안 함 (넘어감)";
+                resultHTML += `
+                    <div class="wrong-box">
+                        <div class="wrong-title">${q.question}</div>
+                        <div class="my-ans">❌ 내가 고른 답: ${userAnsText}</div>
+                        <div class="correct-ans">⭕ 실제 정답: (보기 ${q.correctAnswer + 1}) ${q.options[q.correctAnswer]}</div>
+                    </div>
+                `;
+            });
+        } else {
+            resultHTML += `<h3 style="color: #2b8a3e; margin-top: 25px;">🎉 만점입니다! 최고의 실력입니다!</h3>`;
+        }
+
+        resultHTML += `
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="restartExam()" style="background: #28a745; padding: 15px 40px; font-size: 1.1em;">🔄 시험 다시 풀기</button>
+            </div>
+        `;
+        
+        const quizArea = document.getElementById('quiz-area');
+        if(quizArea) quizArea.innerHTML = resultHTML;
+        localStorage.setItem('cbt_exam_finished', 'true');
+    }
+
+    function saveProgress() {
+        localStorage.setItem('cbt_current_index', currentQuestionIndex);
+        localStorage.setItem('cbt_user_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('cbt_exam_finished', 'false');
+    }
+
+    function clearProgress() {
+        localStorage.removeItem('cbt_current_index');
+        localStorage.removeItem('cbt_user_answers');
+        localStorage.removeItem('cbt_total_seconds');
+        localStorage.removeItem('cbt_exam_finished');
+    }
+
+    function restartExam() {
+        clearProgress();
+        location.reload();
+    }
+
+    function initExam() {
+        clearProgress(); 
+        buildOMRGrid();
+        loadQuestion();
+        startTimer();
+    }
+
+    let calcExpression = '';
+    const screen = document.getElementById('calc-screen');
+
+    function appendCalc(val) {
+        if(!screen) return;
+        if (screen.value === '0' && !isNaN(val)) {
+            calcExpression = val;
+        } else {
+            calcExpression += val;
+        }
+        screen.value = calcExpression;
+    }
+
+    function clearCalc() {
+        calcExpression = '';
+        if(screen) screen.value = '0';
+    }
+
+    function calculate() {
+        if(!screen) return;
+        try {
+            const safeSanitizedExpression = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+            if (!safeSanitizedExpression) {
+                screen.value = '0';
+                return;
+            }
+
+            const computeResult = new Function(`return (${safeSanitizedExpression})`)();
+            
+            if (computeResult === undefined || isNaN(computeResult) || !isFinite(computeResult)) {
+                throw new Error();
+            }
+            
+            screen.value = Number(computeResult.toFixed(4)); 
+            calcExpression = screen.value;
+        } catch (e) {
+            screen.value = '오류';
+            calcExpression = '';
+        }
+    }
+
+    // 문서가 완전히 로드된 후 시작하도록 이벤트 리스너 지정 (지연 문제 해결)
+    window.addEventListener('DOMContentLoaded', () => {
+        initExam();
+    });
+</script>
+
+</body>
+</html>
