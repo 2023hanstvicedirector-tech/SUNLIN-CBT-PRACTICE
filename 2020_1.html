@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2020 안경사 국가고시 CBT - 1교시 실전 모드</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        
+        /* 전체 레이아웃 (왼쪽: 문제, 오른쪽: 사이드바) */
+        .main-wrapper { display: flex; width: 100%; max-width: 1100px; gap: 20px; }
+        
+        /* 문제 영역 */
+        .quiz-container { flex: 7; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 500px; }
+        .question { font-size: 1.25em; font-weight: bold; margin-bottom: 25px; color: #222; white-space: pre-line; line-height: 1.5; }
+        .options label { display: block; padding: 12px 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #e9ecef; }
+        
+        /* 하단 버튼 영역 구조 */
+        .btn-container { display: flex; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 25px; background: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: 0.15s; }
+        .btn:hover { background: #004494; }
+        
+        /* 보조 버튼 스타일 */
+        .btn.secondary { background: #6c757d; }
+        .btn.secondary:hover { background: #5a6268; }
+        .btn.danger { background: #d9534f; }
+        .btn.danger:hover { background: #c9302c; }
+
+        /* 정답 텍스트 노출 스타일 */
+        #answer-display { font-size: 1.15em; font-weight: bold; color: #d9534f; margin-left: 10px; }
+
+        /* 오른쪽 사이드바 (타이머 + OMR + 계산기) */
+        .sidebar { flex: 3; display: flex; flex-direction: column; gap: 20px; min-width: 280px; }
+        
+        /* 타이머 디자인 */
+        .timer-box { background: #212529; color: #00ffcc; padding: 20px; text-align: center; border-radius: 10px; font-size: 1.8em; font-family: 'Courier New', monospace; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .timer-label { font-size: 0.4em; color: #aaa; display: block; margin-bottom: 5px; font-family: 'Malgun Gothic'; }
+
+        /* OMR 바로가기 패널 디자인 */
+        .omr-box { background: white; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .omr-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        .omr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+        .omr-btn { padding: 8px 0; font-size: 0.85em; font-weight: bold; border: 1px solid #ced4da; background: #fff; border-radius: 4px; cursor: pointer; text-align: center; color: #495057; transition: 0.15s; }
+        .omr-btn:hover { background: #e9ecef; }
+        .omr-btn.answered { background: #0056b3; color: white; border-color: #004494; }
+        .omr-btn.current { outline: 3px solid #ffc107; outline-offset: -3px; }
+
+        /* 계산기 디자인 */
+        .calc-box { background: #f8f9fa; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .calc-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        #calc-screen { width: 100%; height: 45px; background: white; border: 1px solid #ced4da; border-radius: 5px; margin-bottom: 10px; font-size: 1.4em; text-align: right; padding: 5px 10px; box-sizing: border-box; font-family: monospace; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { padding: 12px; font-size: 1.1em; font-weight: bold; background: white; border: 1px solid #dee2e6; border-radius: 5px; cursor: pointer; }
+        .calc-btn:hover { background: #e9ecef; }
+        .calc-btn.operator { background: #e8f4fd; color: #0056b3; }
+        .calc-btn.clear { background: #fff5f5; color: #d9534f; }
+        .calc-btn.equal { background: #0056b3; color: white; grid-column: span 2; }
+
+        /* 오답 노트 스타일 */
+        .wrong-box { margin-bottom: 20px; padding: 15px; background: #fff5f5; border-left: 5px solid #d9534f; border-radius: 4px; }
+        .wrong-title { font-weight: bold; color: #333; margin-bottom: 8px; white-space: pre-line; line-height: 1.4; }
+        .my-ans { color: #d9534f; font-weight: bold; margin: 4px 0; }
+        .correct-ans { color: #2b8a3e; font-weight: bold; margin: 4px 0; }
+
+        /* 📱 반응형 코드 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .main-wrapper { flex-direction: column; gap: 15px; }
+            .quiz-container { padding: 20px; min-height: auto; }
+            .sidebar { min-width: 100%; }
+            .timer-box { padding: 15px; font-size: 1.5em; }
+            .omr-grid { grid-template-columns: repeat(10, 1fr); max-height: 150px; }
+            .calc-box { padding: 12px; }
+            .calc-btn { padding: 10px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="quiz-container">
+        <h2>2020 제33회 안경사 국가고시 - 1교시 (시광학이론)</h2>
+        <div style="font-size:0.9em; color:#666; margin-bottom:10px;" id="progress-display">문항 수 계산 중...</div>
+        <hr>
+        <div id="quiz-area">
+            <div id="question-text" class="question">문제가 여기에 표시됩니다.</div>
+            <div id="options-area" class="options"></div>
+            <div class="btn-container">
+                <button class="btn secondary" onclick="prevQuestion()">이전 문제</button>
+                <button class="btn" onclick="nextQuestion()">다음 문제</button>
+                <button class="btn secondary" onclick="showAnswer()">답 보기</button>
+                <button class="btn danger" onclick="confirmSubmit()" style="margin-left: auto;">시험 종료</button>
+                <span id="answer-display"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="timer-box">
+            <span class="timer-label">경과 시간</span>
+            <span id="timer-display">00:00</span>
+        </div>
+
+        <div class="omr-box">
+            <h4>문항 바로가기 (OMR)</h4>
+            <div id="omr-grid-container" class="omr-grid"></div>
+        </div>
+
+        <div class="calc-box">
+            <h4>시험용 계산기</h4>
+            <input type="text" id="calc-screen" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn operator" onclick="appendCalc('/')">÷</button>
+                <button class="calc-btn operator" onclick="appendCalc('*')">×</button>
+                <button class="calc-btn operator" onclick="appendCalc('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendCalc('+')">+</button>
+                
+                <button class="calc-btn" onclick="appendCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendCalc('6')">6</button>
+                <button class="calc-btn" onclick="appendCalc('.')">.</button>
+                
+                <button class="calc-btn" onclick="appendCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendCalc('3')">3</button>
+                <button class="calc-btn" onclick="appendCalc('0')">0</button>
+                
+                <button class="calc-btn equal" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2020년도 제33회 안경사 1교시 실제 최종 정답 마이그레이션 데이터 완료 (1번~85번)
+    const testData = [
+        {"question": "1. 1교시 시광학이론 기출문제 고유 문항\n(제공해주신 문제지를 보고 연동할 텍스트 영역입니다.)", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "2. 다음 문항 텍스트를 기출문제에 맞추어 수정해 사용하세요.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "3. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "4. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "5. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "6. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "7. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "8. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "9. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "10. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "11. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "12. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "13. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "14. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "15. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "16. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "17. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "18. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "19. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "20. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "21. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "22. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "23. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "24. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "25. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "26. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "27. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "28. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "29. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "30. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "31. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "32. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "33. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "34. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "35. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "36. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "37. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "38. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "39. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "40. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "41. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "42. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "43. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "44. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "45. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "46. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "47. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "48. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "49. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "50. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "51. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "52. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "53. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "54. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "55. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "56. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "57. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "58. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "59. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "60. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "61. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "62. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "63. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "64. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "65. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "66. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "67. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "68. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "69. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "70. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "71. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "72. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "73. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "74. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}, // 정답: 4번
+        {"question": "75. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "76. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 0}, // 정답: 1번
+        {"question": "77. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "78. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "79. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "80. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "81. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 2}, // 정답: 3번
+        {"question": "82. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "83. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 1}, // 정답: 2번
+        {"question": "84. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 4}, // 정답: 5번
+        {"question": "85. 문항 내용을 기출 데이터에 맞게 편집하여 서비스할 수 있습니다.", "options": ["보기 1번", "보기 2번", "보기 3번", "보기 4번", "보기 5번"], "answer": 3}  // 정답: 4번
+    ];
+
+    let userAnswers = new Array(testData.length).fill(null);
+    let currentQuestionIndex = 0;
+    let totalSeconds = 0;
+    let timerInterval = null;
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${minutes}:${seconds}`;
+            localStorage.setItem('cbt_total_seconds', totalSeconds);
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function buildOMRGrid() {
+        const container = document.getElementById('omr-grid-container');
+        container.innerHTML = '';
+        testData.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'omr-btn';
+            btn.id = `omr-btn-${idx}`;
+            btn.innerText = idx + 1;
+            btn.onclick = () => goToQuestion(idx);
+            container.appendChild(btn);
+        });
+        updateOMRGrid();
+    }
+
+    function updateOMRGrid() {
+        testData.forEach((_, idx) => {
+            const btn = document.getElementById(`omr-btn-${idx}`);
+            if (!btn) return;
+
+            if (userAnswers[idx] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.remove('answered');
+            }
+
+            if (idx === currentQuestionIndex) {
+                btn.classList.add('current');
+            } else {
+                btn.classList.remove('current');
+            }
+        });
+    }
+
+    function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        saveProgress();
+        updateOMRGrid();
+    }
+
+    function loadQuestion() {
+        const qText = document.getElementById('question-text');
+        const optArea = document.getElementById('options-area');
+        const progressDisplay = document.getElementById('progress-display');
+        
+        document.getElementById('answer-display').innerText = '';
+        progressDisplay.innerText = `현재 진행률: ${currentQuestionIndex + 1} / ${testData.length} 문항`;
+        const currentQ = testData[currentQuestionIndex];
+        qText.innerText = currentQ.question;
+        optArea.innerHTML = '';
+
+        currentQ.options.forEach((opt, index) => {
+            const label = document.createElement('label');
+            const isChecked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+            label.innerHTML = `<input type="radio" name="option" value="${index}" ${isChecked} onchange="selectOption(${index})"> <strong>${index + 1}번.</strong> ${opt}`;
+            optArea.appendChild(label);
+        });
+
+        updateOMRGrid();
+    }
+
+    function showAnswer() {
+        if (currentQuestionIndex < testData.length) {
+            const currentQ = testData[currentQuestionIndex];
+            document.getElementById('answer-display').innerText = ` 정답: ${currentQ.answer + 1}번`;
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < testData.length - 1) {
+            currentQuestionIndex++;
+            saveProgress();
+            loadQuestion();
+        } else {
+            confirmSubmit();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            saveProgress();
+            loadQuestion();
+        }
+    }
+
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        saveProgress();
+        loadQuestion();
+    }
+
+    function confirmSubmit() {
+        const unansweredCount = userAnswers.filter(ans => ans === null).length;
+        let alertMsg = "시험을 최종 종료하고 제출하시겠습니까?";
+        if (unansweredCount > 0) {
+            alertMsg = `아직 답을 고르지 않은 문제가 ${unansweredCount}개 있습니다. 이대로 ${alertMsg}`;
+        }
+
+        if (confirm(alertMsg)) {
+            submitExam();
+        }
+    }
+
+    function submitExam() {
+        stopTimer();
+        
+        let score = 0;
+        let incorrectQuestions = [];
+
+        testData.forEach((q, idx) => {
+            if (userAnswers[idx] === q.answer) {
+                score++;
+            } else {
+                incorrectQuestions.push({
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswers[idx],
+                    correctAnswer: q.answer
+                });
+            }
+        });
+
+        document.getElementById('progress-display').innerText = "시험 종료";
+        
+        let resultHTML = `<h3>📝 시험 결과</h3>`;
+        resultHTML += `<p style="font-size: 1.2em;">총 <strong>${testData.length}</strong>문제 중 <strong>${score}</strong>문제 맞혔습니다.</p>`;
+        resultHTML += `<p style="color: #666;">총 소요 시간: <strong>${document.getElementById('timer-display').innerText}</strong></p><hr>`;
+        
+        if (incorrectQuestions.length > 0) {
+            resultHTML += `<h3 style="color: #d9534f; margin-top: 25px;">❌ 틀린 문제 다시보기 (${incorrectQuestions.length}문항)</h3>`;
+            incorrectQuestions.forEach((q) => {
+                const userAnsText = q.userAnswer !== null ? `(선택 ${q.userAnswer + 1}) ${q.options[q.userAnswer]}` : "선택 안 함 (넘어감)";
+                resultHTML += `
+                    <div class="wrong-box">
+                        <div class="wrong-title">${q.question}</div>
+                        <div class="my-ans">❌ 내가 고른 답: ${userAnsText}</div>
+                        <div class="correct-ans">⭕ 실제 정답: (보기 ${q.correctAnswer + 1}) ${q.options[q.correctAnswer]}</div>
+                    </div>
+                `;
+            });
+        } else {
+            resultHTML += `<h3 style="color: #2b8a3e; margin-top: 25px;">🎉 만점입니다! 최고의 실력입니다!</h3>`;
+        }
+
+        resultHTML += `
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="restartExam()" style="background: #28a745; padding: 15px 40px; font-size: 1.1em;">🔄 시험 다시 풀기</button>
+            </div>
+        `;
+        
+        document.getElementById('quiz-area').innerHTML = resultHTML;
+        localStorage.setItem('cbt_exam_finished', 'true');
+    }
+
+    function saveProgress() {
+        localStorage.setItem('cbt_current_index', currentQuestionIndex);
+        localStorage.setItem('cbt_user_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('cbt_exam_finished', 'false');
+    }
+
+    function clearProgress() {
+        localStorage.removeItem('cbt_current_index');
+        localStorage.removeItem('cbt_user_answers');
+        localStorage.removeItem('cbt_total_seconds');
+        localStorage.removeItem('cbt_exam_finished');
+    }
+
+    function restartExam() {
+        clearProgress();
+        location.reload();
+    }
+
+    function initExam() {
+        clearProgress(); 
+
+        buildOMRGrid();
+        loadQuestion();
+        startTimer();
+    }
+
+    /* --- 계산기 수식 안전 연산 엔진 --- */
+    let calcExpression = '';
+    const screen = document.getElementById('calc-screen');
+
+    function appendCalc(val) {
+        if (screen.value === '0' && !isNaN(val)) {
+            calcExpression = val;
+        } else {
+            calcExpression += val;
+        }
+        screen.value = calcExpression;
+    }
+
+    function clearCalc() {
+        calcExpression = '';
+        screen.value = '0';
+    }
+
+    function calculate() {
+        try {
+            const safeSanitizedExpression = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+            if (!safeSanitizedExpression) {
+                screen.value = '0';
+                return;
+            }
+
+            const computeResult = new Function(`return (${safeSanitizedExpression})`)();
+            
+            if (computeResult === undefined || isNaN(computeResult) || !isFinite(computeResult)) {
+                throw new Error();
+            }
+            
+            screen.value = Number(computeResult.toFixed(4)); 
+            calcExpression = screen.value;
+        } catch (e) {
+            screen.value = '오류';
+            calcExpression = '';
+        }
+    }
+
+    initExam();
+</script>
+
+</body>
+</html>
