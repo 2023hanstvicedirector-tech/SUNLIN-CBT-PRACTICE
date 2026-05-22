@@ -29,13 +29,13 @@
         .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         
         /* 교시 선택 버튼 스타일 */
-        .exam-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; text-decoration: none; color: #333; font-weight: bold; transition: 0.2s; box-sizing: border-box; cursor: pointer; }
+        .exam-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; text-decoration: none; color: #333; font-weight: bold; transition: 0.2s; box-sizing: border-box; }
         .exam-btn:hover { background: #e8f4fd; border-color: #0056b3; color: #0056b3; transform: translateY(-2px); }
         .exam-btn span { font-size: 1.1em; }
         .exam-btn small { font-size: 0.75em; color: #888; font-weight: normal; margin-top: 4px; }
 
-        /* [수정] 준비중인 버튼 스타일 - 알림창을 띄우기 위해 pointer-events 제거 */
-        .exam-btn.disabled { background: #ebebeb; border-color: #ddd; color: #aaa; }
+        /* 준비중인 버튼 스타일 */
+        .exam-btn.disabled { background: #ebebeb; border-color: #ddd; color: #aaa; cursor: not-allowed; pointer-events: none; }
         .exam-btn.disabled small { color: #aaa; }
 
         /* 푸터 */
@@ -64,6 +64,7 @@
         <p>풀고 싶은 기출문제의 년도와 교시를 선택하면 바로 CBT 시험이 시작됩니다. 각 교시별 시험이 종료되면 자동으로 오답노트가 생성됩니다.</p>
     </div>
 
+    <!-- 2019년 -->
     <div class="year-card">
         <div class="year-title">📅 2019년 제32회 기출문제</div>
         <div class="btn-group">
@@ -75,47 +76,131 @@
                 <span>2교시</span>
                 <small>의료관계법규 외 (105문항)</small>
             </a>
-            <a href="#" class="exam-btn disabled">
+            <a href="2019_3.html" class="exam-btn">
                 <span>3교시</span>
-                <small>실기시험</small>
+                <small>실기시험 (60문항)</small>
             </a>
         </div>
     </div>
 
+    <!-- 2020년 -->
     <div class="year-card">
         <div class="year-title">📅 2020년 제33회 기출문제</div>
         <div class="btn-group">
             <a href="#" class="exam-btn disabled">
                 <span>1교시</span>
-                <small>시광학이론</small>
+                <small>시광학이론 (85문항)</small>
             </a>
             <a href="#" class="exam-btn disabled">
                 <span>2교시</span>
-                <small>의료관계법규 외</small>
+                <small>의료관계법규 외 (105문항)</small>
             </a>
             <a href="#" class="exam-btn disabled">
                 <span>3교시</span>
-                <small>실기시험</small>
+                <small>실기시험 (60문항)</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2021년 -->
+    <div class="year-card">
+        <div class="year-title">📅 2021년 제34회 기출문제</div>
+        <div class="btn-group">
+            <a href="#" class="exam-btn disabled">
+                <span>1교시</span>
+                <small>시광학이론 (85문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>2교시</span>
+                <small>의료관계법규 외 (105문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>3교시</span>
+                <small>실기시험 (60문항)</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2022년 -->
+    <div class="year-card">
+        <div class="year-title">📅 2022년 제35회 기출문제</div>
+        <div class="btn-group">
+            <a href="#" class="exam-btn disabled">
+                <span>1교시</span>
+                <small>시광학이론 (85문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>2교시</span>
+                <small>의료관계법규 외 (105문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>3교시</span>
+                <small>실기시험 (60문항)</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2023년 -->
+    <div class="year-card">
+        <div class="year-title">📅 2023년 제36회 기출문제</div>
+        <div class="btn-group">
+            <a href="#" class="exam-btn disabled">
+                <span>1교시</span>
+                <small>시광학이론 (85문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>2교시</span>
+                <small>의료관계법규 외 (105문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>3교시</span>
+                <small>실기시험 (60문항)</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2024년 -->
+    <div class="year-card">
+        <div class="year-title">📅 2024년 제37회 기출문제</div>
+        <div class="btn-group">
+            <a href="#" class="exam-btn disabled">
+                <span>1교시</span>
+                <small>시광학이론 (85문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>2교시</span>
+                <small>의료관계법규 외 (105문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>3교시</span>
+                <small>실기시험 (60문항)</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2025년 -->
+    <div class="year-card">
+        <div class="year-title">📅 2025년 제38회 기출문제</div>
+        <div class="btn-group">
+            <a href="#" class="exam-btn disabled">
+                <span>1교시</span>
+                <small>시광학이론 (85문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>2교시</span>
+                <small>의료관계법규 외 (105문항)</small>
+            </a>
+            <a href="#" class="exam-btn disabled">
+                <span>3교시</span>
+                <small>실기시험 (60문항)</small>
             </a>
         </div>
     </div>
 </div>
 
 <footer>
-    <p>© 안경사 CBT 모의고사 포털. All rights reserved.</p>
+    <p>© 안경사 CBT 모의고사 포털. All 시광학이론 연동 완료.</p>
 </footer>
-
-<script>
-    document.querySelectorAll('.exam-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            // 주소가 '#' 이거나 disabled 클래스를 가지고 있으면 링크 이동을 막고 알림창 표시
-            if (this.getAttribute('href') === '#' || this.classList.contains('disabled')) {
-                e.preventDefault(); // 기본 링크 이동 기능 방지
-                alert('아직 준비중입니다.');
-            }
-        });
-    });
-</script>
 
 </body>
 </html>

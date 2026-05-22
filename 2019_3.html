@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2019 안경사 국가고시 CBT - 3교시 실전 모드</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        
+        /* 전체 레이아웃 (왼쪽: 문제, 오른쪽: 사이드바) */
+        .main-wrapper { display: flex; width: 100%; max-width: 1100px; gap: 20px; }
+        
+        /* 문제 영역 */
+        .quiz-container { flex: 7; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 500px; }
+        .question { font-size: 1.25em; font-weight: bold; margin-bottom: 25px; color: #222; white-space: pre-line; line-height: 1.5; }
+        .options label { display: block; padding: 12px 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #e9ecef; }
+        
+        /* 하단 버튼 영역 구조 */
+        .btn-container { display: flex; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 25px; background: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: 0.15s; }
+        .btn:hover { background: #004494; }
+        
+        /* 보조 버튼 스타일 */
+        .btn.secondary { background: #6c757d; }
+        .btn.secondary:hover { background: #5a6268; }
+        .btn.danger { background: #d9534f; }
+        .btn.danger:hover { background: #c9302c; }
+
+        /* 정답 텍스트 노출 스타일 */
+        #answer-display { font-size: 1.15em; font-weight: bold; color: #d9534f; margin-left: 10px; }
+
+        /* 오른쪽 사이드바 (타이머 + OMR + 계산기) */
+        .sidebar { flex: 3; display: flex; flex-direction: column; gap: 20px; min-width: 280px; }
+        
+        /* 타이머 디자인 */
+        .timer-box { background: #212529; color: #00ffcc; padding: 20px; text-align: center; border-radius: 10px; font-size: 1.8em; font-family: 'Courier New', monospace; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .timer-label { font-size: 0.4em; color: #aaa; display: block; margin-bottom: 5px; font-family: 'Malgun Gothic'; }
+
+        /* OMR 바로가기 패널 디자인 */
+        .omr-box { background: white; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .omr-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        .omr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
+        .omr-btn { padding: 8px 0; font-size: 0.85em; font-weight: bold; border: 1px solid #ced4da; background: #fff; border-radius: 4px; cursor: pointer; text-align: center; color: #495057; transition: 0.15s; }
+        .omr-btn:hover { background: #e9ecef; }
+        .omr-btn.answered { background: #0056b3; color: white; border-color: #004494; }
+        .omr-btn.current { outline: 3px solid #ffc107; outline-offset: -3px; }
+
+        /* 계산기 디자인 */
+        .calc-box { background: #f8f9fa; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .calc-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        #calc-screen { width: 100%; height: 45px; background: white; border: 1px solid #ced4da; border-radius: 5px; margin-bottom: 10px; font-size: 1.4em; text-align: right; padding: 5px 10px; box-sizing: border-box; font-family: monospace; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { padding: 12px; font-size: 1.1em; font-weight: bold; background: white; border: 1px solid #dee2e6; border-radius: 5px; cursor: pointer; }
+        .calc-btn:hover { background: #e9ecef; }
+        .calc-btn.operator { background: #e8f4fd; color: #0056b3; }
+        .calc-btn.clear { background: #fff5f5; color: #d9534f; }
+        .calc-btn.equal { background: #0056b3; color: white; grid-column: span 2; }
+
+        /* 오답 노트 스타일 */
+        .wrong-box { margin-bottom: 20px; padding: 15px; background: #fff5f5; border-left: 5px solid #d9534f; border-radius: 4px; }
+        .wrong-title { font-weight: bold; color: #333; margin-bottom: 8px; white-space: pre-line; line-height: 1.4; }
+        .my-ans { color: #d9534f; font-weight: bold; margin: 4px 0; }
+        .correct-ans { color: #2b8a3e; font-weight: bold; margin: 4px 0; }
+
+        /* 📱 반응형 코드 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .main-wrapper { flex-direction: column; gap: 15px; }
+            .quiz-container { padding: 20px; min-height: auto; }
+            .sidebar { min-width: 100%; }
+            .timer-box { padding: 15px; font-size: 1.5em; }
+            .omr-grid { grid-template-columns: repeat(10, 1fr); max-height: 150px; }
+            .calc-box { padding: 12px; }
+            .calc-btn { padding: 10px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="quiz-container">
+        <h2>2019 제32회 안경사 국가고시 - 3교시 (실기시험)</h2>
+        <div style="font-size:0.9em; color:#666; margin-bottom:10px;" id="progress-display">문항 수 계산 중...</div>
+        <hr>
+        <div id="quiz-area">
+            <div id="question-text" class="question">문제가 여기에 표시됩니다.</div>
+            <div id="options-area" class="options"></div>
+            <div class="btn-container">
+                <button class="btn secondary" onclick="prevQuestion()">이전 문제</button>
+                <button class="btn" onclick="nextQuestion()">다음 문제</button>
+                <button class="btn secondary" onclick="showAnswer()">답 보기</button>
+                <button class="btn danger" onclick="confirmSubmit()" style="margin-left: auto;">시험 종료</button>
+                <span id="answer-display"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="timer-box">
+            <span class="timer-label">경과 시간</span>
+            <span id="timer-display">00:00</span>
+        </div>
+
+        <div class="omr-box">
+            <h4>문항 바로가기 (OMR)</h4>
+            <div id="omr-grid-container" class="omr-grid"></div>
+        </div>
+
+        <div class="calc-box">
+            <h4>시험용 계산기</h4>
+            <input type="text" id="calc-screen" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn operator" onclick="appendCalc('/')">÷</button>
+                <button class="calc-btn operator" onclick="appendCalc('*')">×</button>
+                <button class="calc-btn operator" onclick="appendCalc('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendCalc('+')">+</button>
+                
+                <button class="calc-btn" onclick="appendCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendCalc('6')">6</button>
+                <button class="calc-btn" onclick="appendCalc('.')">.</button>
+                
+                <button class="calc-btn" onclick="appendCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendCalc('3')">3</button>
+                <button class="calc-btn" onclick="appendCalc('0')">0</button>
+                
+                <button class="calc-btn" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const testData = [
+        {
+            "question": "1. 안경테가 선택된 후에 결정되는 것은?",
+            "options": ["가입도", "용도별 표기", "원주렌즈 축", "광학중심점 높이", "프리즘굴절력 및 기저방향"],
+            "answer": 3
+        },
+        {
+            "question": "2. 다음과 같은 처방에서 조제가공 PD는?\n\n• 원용 OU: S -4.00 D ⌒ C -1.00 D Ax 90° ⌒ 1.0Δ BI\n• 양안 기준 PD: 60 mm",
+            "options": ["56 mm", "58 mm", "62 mm", "64 mm", "66 mm"],
+            "answer": 1
+        },
+        {
+            "question": "3. 안경의 조제가공에서 회전점조건과 관계되는 요소로만 구성된 것은?",
+            "options": ["정점간거리, 경사각", "경사각, 앞면평면휨각", "조제가공 PD, 정점간거리", "안경렌즈 굴절력, 측정기준 PD", "렌즈의 기본커브, 렌즈의 굴절률"],
+            "answer": 0
+        },
+        {
+            "question": "4. 안경의 조제가공과정에서 정식계측방법으로 설계할 때, 형판의 기준점에서 설계점의 위치는?\n\n• 안경테 계측크기: 48□12 135\n• 원용 양안 기준 PD: 66 mm (단, 좌우 PD는 같음)",
+            "options": ["코쪽 3 mm", "귀쪽 3 mm", "코쪽 6 mm", "귀쪽 6 mm", "코쪽 9 mm"],
+            "answer": 1
+        },
+        {
+            "question": "5. 다음은 안경테 계측을 설명한 것이다. 해당되는 것은?\n\n[ 안경테를 수평으로 위치시킨 상태에서 렌즈삽입부 가장자리 곡선의 상하좌우 최고돌출부에서 접선을 그어 직사각형을 만들었을 때, 이 직사각형의 가로길이를 취한다. ]",
+            "options": ["박싱시스템의 연결부 크기", "박싱시스템의 렌즈삽입부 크기", "상공련시스템의 렌즈삽입부 크기", "데이텀라인시스템의 연결부 크기", "데이텀라인시스템의 렌즈삽입부 크기"],
+            "answer": 1
+        },
+        {
+            "question": "6. 다음 처방으로 조제가공 할 때, 형판의 기준점에서 설계점의 위치는?\n\n• OD: S -5.00 D ⌒ 2.0Δ BO\n• 기준 PD/R: 34 mm\n• 안경테 정식계측크기: 56□16 135",
+            "options": ["코쪽 2 mm", "코쪽 4 mm", "코쪽 6 mm", "귀쪽 4 mm", "귀쪽 6 mm"],
+            "answer": 0
+        },
+        {
+            "question": "7. 자동기기병행형식으로 고굴절력 안경렌즈를 조제가공 할 때, 옳은 것은?",
+            "options": ["림이 가는 안경테를 선택한다.", "일반형판보다 편위형판을 사용한다.", "렌즈삽입부가 큰 안경테를 선택한다.", "산각의 위치는 전면:후면을 7:3으로 가공한다.", "안경테는 기준점에서 설계점의 편위량이 큰 것으로 선택한다."],
+            "answer": 1
+        },
+        {
+            "question": "8. 안경의 경사각에 관한 설명으로 옳은 것은?",
+            "options": ["신장이 클수록 경사각은 작아진다.", "주시거리가 짧을수록 경사각은 작아진다.", "조준선과 렌즈의 후면이 직교하도록 한다.", "근용안경의 경사각은 일반적으로 10° ~ 15°이다.", "원용안경의 경사각은 일반적으로 15° ~ 25°이다."],
+            "answer": 3
+        },
+        {
+            "question": "9. 다음 그림은 렌즈미터 스크린 상이다. 굴절력 표기는?\n<자료(비공개)>",
+            "options":
