@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2021 안경사 국가고시 CBT - 1교시 실전 모드</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        
+        /* 전체 레이아웃 (왼쪽: 문제, 오른쪽: 사이드바) */
+        .main-wrapper { display: flex; width: 100%; max-width: 1100px; gap: 20px; }
+        
+        /* 문제 영역 */
+        .quiz-container { flex: 7; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 500px; }
+        .question { font-size: 1.25em; font-weight: bold; margin-bottom: 25px; color: #222; white-space: pre-line; line-height: 1.5; }
+        .options label { display: block; padding: 12px 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #e9ecef; }
+        
+        /* 하단 버튼 영역 구조 */
+        .btn-container { display: flex; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 25px; background: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: 0.15s; }
+        .btn:hover { background: #004494; }
+        
+        /* 보조 버튼 스타일 */
+        .btn.secondary { background: #6c757d; }
+        .btn.secondary:hover { background: #5a6268; }
+        .btn.danger { background: #d9534f; }
+        .btn.danger:hover { background: #c9302c; }
+
+        /* 정답 텍스트 노출 스타일 */
+        #answer-display { font-size: 1.15em; font-weight: bold; color: #d9534f; margin-left: 10px; }
+
+        /* 오른쪽 사이드바 (타이머 + OMR + 계산기) */
+        .sidebar { flex: 3; display: flex; flex-direction: column; gap: 20px; min-width: 280px; }
+        
+        /* 타이머 디자인 */
+        .timer-box { background: #212529; color: #00ffcc; padding: 20px; text-align: center; border-radius: 10px; font-size: 1.8em; font-family: 'Courier New', monospace; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .timer-label { font-size: 0.4em; color: #aaa; display: block; margin-bottom: 5px; font-family: 'Malgun Gothic'; }
+
+        /* OMR 바로가기 패널 디자인 */
+        .omr-box { background: white; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .omr-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        .omr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
+        .omr-btn { padding: 8px 0; font-size: 0.85em; font-weight: bold; border: 1px solid #ced4da; background: #fff; border-radius: 4px; cursor: pointer; text-align: center; color: #495057; transition: 0.15s; }
+        .omr-btn:hover { background: #e9ecef; }
+        .omr-btn.answered { background: #0056b3; color: white; border-color: #004494; }
+        .omr-btn.current { outline: 3px solid #ffc107; outline-offset: -3px; }
+
+        /* 계산기 디자인 */
+        .calc-box { background: #f8f9fa; border: 1px solid #ced4da; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .calc-box h4 { margin: 0 0 10px 0; color: #495057; text-align: center; }
+        #calc-screen { width: 100%; height: 45px; background: white; border: 1px solid #ced4da; border-radius: 5px; margin-bottom: 10px; font-size: 1.4em; text-align: right; padding: 5px 10px; box-sizing: border-box; font-family: monospace; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { padding: 12px; font-size: 1.1em; font-weight: bold; background: white; border: 1px solid #dee2e6; border-radius: 5px; cursor: pointer; }
+        .calc-btn:hover { background: #e9ecef; }
+        .calc-btn.operator { background: #e8f4fd; color: #0056b3; }
+        .calc-btn.clear { background: #fff5f5; color: #d9534f; }
+        .calc-btn.equal { background: #0056b3; color: white; grid-column: span 2; }
+
+        /* 오답 노트 스타일 */
+        .wrong-box { margin-bottom: 20px; padding: 15px; background: #fff5f5; border-left: 5px solid #d9534f; border-radius: 4px; }
+        .wrong-title { font-weight: bold; color: #333; margin-bottom: 8px; white-space: pre-line; line-height: 1.4; }
+        .my-ans { color: #d9534f; font-weight: bold; margin: 4px 0; }
+        .correct-ans { color: #2b8a3e; font-weight: bold; margin: 4px 0; }
+
+        /* 📱 반응형 코드 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .main-wrapper { flex-direction: column; gap: 15px; }
+            .quiz-container { padding: 20px; min-height: auto; }
+            .sidebar { min-width: 100%; }
+            .timer-box { padding: 15px; font-size: 1.5em; }
+            .omr-grid { grid-template-columns: repeat(10, 1fr); max-height: 150px; }
+            .calc-box { padding: 12px; }
+            .calc-btn { padding: 10px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="quiz-container">
+        <h2>2021 제34회 안경사 국가고시 - 1교시 (시광학이론)</h2>
+        <div style="font-size:0.9em; color:#666; margin-bottom:10px;" id="progress-display">문항 수 계산 중...</div>
+        <hr>
+        <div id="quiz-area">
+            <div id="question-text" class="question">문제가 여기에 표시됩니다.</div>
+            <div id="options-area" class="options"></div>
+            <div class="btn-container">
+                <button class="btn secondary" onclick="prevQuestion()">이전 문제</button>
+                <button class="btn" onclick="nextQuestion()">다음 문제</button>
+                <button class="btn secondary" onclick="showAnswer()">답 보기</button>
+                <button class="btn danger" onclick="confirmSubmit()" style="margin-left: auto;">시험 종료</button>
+                <span id="answer-display"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="timer-box">
+            <span class="timer-label">경과 시간</span>
+            <span id="timer-display">00:00</span>
+        </div>
+
+        <div class="omr-box">
+            <h4>문항 바로가기 (OMR)</h4>
+            <div id="omr-grid-container" class="omr-grid"></div>
+        </div>
+
+        <div class="calc-box">
+            <h4>시험용 계산기</h4>
+            <input type="text" id="calc-screen" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn operator" onclick="appendCalc('/')">÷</button>
+                <button class="calc-btn operator" onclick="appendCalc('*')">×</button>
+                <button class="calc-btn operator" onclick="appendCalc('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendCalc('+')">+</button>
+                
+                <button class="calc-btn" onclick="appendCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendCalc('6')">6</button>
+                <button class="calc-btn" onclick="appendCalc('.')">.</button>
+                
+                <button class="calc-btn" onclick="appendCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendCalc('3')">3</button>
+                <button class="calc-btn" onclick="appendCalc('0')">0</button>
+                
+                <button class="calc-btn equal" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2021년도 제34회 안경사 1교시 실제 복원 기출문제 및 정답 통합 배열 (1번~85번)
+    const testData = [
+        {
+            "question": "1. 다음과 관련된 각막층은?\n\n• 단층의 세포로 이루어져 있다.\n• 세포가 재생되지 않는다.\n• 각막의 수분함량을 일정하게 조절한다.",
+            "image": "",
+            "options": ["기질", "내피", "상피", "데스메막", "보우만막"],
+            "answer": 1
+        },
+        {
+            "question": "2. 다음에 해당하는 혈관은?\n\n• 안구 중간막의 혈액이 빠져 나가는 정맥이다.\n• 안구 적도부 후방 4 mm 부위의 공막을 통과한다.",
+            "image": "",
+            "options": ["또아리정맥", "해면정맥동", "뒤섬모체정맥", "망막중심정맥", "앞섬모체정맥"],
+            "answer": 0
+        },
+        {
+            "question": "3. 다음의 특성을 보이는 눈 조직은?\n\n• 색소와 혈관이 풍부하다.\n• 망막 바깥쪽 1/3 부위에 영양을 공급한다.\n• 공막을 통과하는 빛을 차단한다.",
+            "image": "",
+            "options": ["홍채", "맥락막", "섬모체", "수정체", "유리체"],
+            "answer": 1
+        },
+        {
+            "question": "4. 큰홍채동맥고리(대홍채동맥륜)를 형성하는 혈관은?",
+            "image": "",
+            "options": [
+                "망막중심동맥과 앞섬모체동맥",
+                "망막중심동맥과 긴뒤섬모체동맥",
+                "앞섬모체동맥과 긴뒤섬모체동맥",
+                "망막중심동맥과 짧은뒤섬모체동맥",
+                "짧은뒤섬모체동맥과 긴뒤섬모체동맥"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "5. 망막 중심오목에 집중적으로 분포하며, 색각의 인식에 관여하는 광수용체세포는?",
+            "image": "",
+            "options": ["막대세포", "수평세포", "원뿔세포", "무축삭세포", "신경절세포"],
+            "answer": 2
+        },
+        {
+            "question": "6. 시신경섬유를 구성하는 신경절세포의 축삭이 신경연접을 형성하는 곳은?",
+            "image": "",
+            "options": ["시각로", "가쪽무릎체", "시신경교차", "시신경유두", "시각로부터붓살"],
+            "answer": 1
+        },
+        {
+            "question": "7. 일생 동안 지속적으로 성장하는 눈 조직은?",
+            "image": "",
+            "options": ["각막", "공막", "홍채", "섬모체", "수정체"],
+            "answer": 4
+        },
+        {
+            "question": "8. 방수가 생성되는 곳은?",
+            "image": "",
+            "options": ["섬모체", "유리체", "공막돌기", "섬유주망", "슐렘관(Schlemm's canal)"],
+            "answer": 0
+        },
+        {
+            "question": "9. 다음 중 위안화틈새(위눈확틈새)를 통과하는 것은?",
+            "image": "",
+            "options": ["눈동맥", "시각신경", "광대신경", "위턱신경", "도르래신경"],
+            "answer": 4
+        },
+        {
+            "question": "10. 술잔세포와 덧눈물샘이 위치하는 조직은?",
+            "image": "",
+            "options": ["각막", "결막", "공막", "망막", "맥락막"],
+            "answer": 1
+        },
+        {
+            "question": "11. 눈물층과 분비샘이 옳게 연결된 것은?",
+            "image": "",
+            "options": [
+                "수성층 - 짜이스샘",
+                "지방층 - 마이봄샘",
+                "지방층 - 술잔세포",
+                "점액층 - 볼프링샘",
+                "점액층 - 크라우제샘"
+            ],
+            "answer": 1
+        },
+        {
+            "question": "12. 위에서 본 안구근육의 모식도이다. (가) 근육은? <자료(비공개)>",
+            "image": "",
+            "options": ["위빗근", "위곧은근", "아래곧은근", "가쪽곧은근", "안쪽곧은근"],
+            "answer": 0
+        },
+        {
+            "question": "13. 얼굴신경의 지배를 받는 근육은?",
+            "image": "",
+            "options": ["눈둘레근", "섬모체근", "동공조임근", "동공확대근", "눈꺼풀올림근"],
+            "answer": 0
+        },
+        {
+            "question": "14. 그림과 같은 시표로 측정하는 것은? <자료(비공개)>",
+            "image": "",
+            "options": ["입체시력", "분리시력", "가독시력", "부척시력", "가시시력"],
+            "answer": 1
+        },
+        {
+            "question": "15. 5 m용 란돌트고리 시력표에서 시력 0.2에 해당하는 시표의 틈 간격은 얼마인가?",
+            "image": "",
+            "options": ["7.5 mm", "10.0 mm", "12.5 mm", "15.0 mm", "17.5 mm"],
+            "answer": 0
+        },
+        {
+            "question": "16. 시각전달경로 중 오른쪽 시각로의 혈관장애로 발생할 수 있는 시야장애는?\n\n① <자료(비공개)>\n② <자료(비공개)>\n③ <자료(비공개)>\n④ <자료(비공개)>\n⑤ <자료(비공개)>",
+            "image": "",
+            "options": ["①번 형태", "②번 형태", "③번 형태", "④번 형태", "⑤번 형태"],
+            "answer": 3
+        },
+        {
+            "question": "17. 암소시 상태에서 주로 반응하는 광색소는?",
+            "image": "",
+            "options": ["루테인(lutein)", "요돕신(iodopsin)", "카로틴(carotene)", "로돕신(rhodopsin)", "엽황소(xanthophyll)"],
+            "answer": 3
+        },
+        {
+            "question": "18. 망막은 순응정도에 따라 밝은 곳에서는 555 nm 파장의 빛이 밝게 보이고 어두운 곳에서는 505 nm 파장의 빛이 밝게 보인다. 이와 관련된 것은?",
+            "image": "",
+            "options": [
+                "푸르키네(Purkinje) 이동",
+                "멘델바움(Mandelbaum) 효과",
+                "푸르키네-샌슨(Purkinje-Sanson) 상",
+                "영-헬름홀츠(Young-Helmholtz) 이론",
+                "스타일스-크로우포드(Styles-Crawford) 효과"
+            ],
+            "answer": 0
+        },
+        {
+            "question": "19. 주간맹이 나타날 수 있는 경우는?",
+            "image": "",
+            "options": ["노년환", "유리체액화", "전록색각이상", "비타민A 결핍", "수정체 중앙부혼탁"],
+            "answer": 4
+        },
+        {
+            "question": "20. 원시가 교정되지 않은 상태로 과도한 근거리 작업을 장시간 했을 때 나타나는 굴절이상은?",
+            "image": "",
+            "options": ["단순근시", "병적근시", "거짓근시", "합병근시", "기계근시"],
+            "answer": 2
+        },
+        {
+            "question": "21. 수정체없음증에서 나타나는 현상은?",
+            "image": "",
+            "options": ["백색시증", "녹색시증", "흑색시증", "황색시증", "청색시증"],
+            "answer": 4
+        },
+        {
+            "question": "22. 노화된 수정체의 특성으로 옳은 것은?",
+            "image": "",
+            "options": ["핵의 크기가 감소한다.", "산소 소모량이 증가한다.", "자체 탄력성이 감소한다.", "용적이 지속적으로 감소한다.", "불용성단백질 함량이 감소한다."],
+            "answer": 2
+        },
+        {
+            "question": "23. 굴절조절내사시 증상이 있는 어린이에게 적합한 안경 처방은?",
+            "image": "",
+            "options": ["색필터 안경착용", "원시교정 안경착용", "근시교정 안경착용", "편광필터 안경착용", "사이즈렌즈 안경착용"],
+            "answer": 1
+        },
+        {
+            "question": "24. 다음과 같은 증상을 보이는 안위이상은?\n\n• 유년기에 나타남\n• 국내에서 발병빈도가 높음\n• 피로하거나 열이 날 때 한쪽 눈이 귀쪽으로 돌아감\n• 밝은 햇빛 아래에서 한쪽 눈을 감거나 눈부심이 심함",
+            "image": "",
+            "options": ["거짓사시", "마비사시", "잠복사시", "특수사시", "간헐외사시"],
+            "answer": 4
+        },
+        {
+            "question": "25. 오른쪽 눈에 펜라이트를 비추었다. 대광반사가 정상인 사람에게서 관찰되는 동공반응은?",
+            "image": "",
+            "options": [
+                "두 눈에서 모두 축소된다.",
+                "두 눈에서 모두 확대된다.",
+                "두 눈에서 모두 변화가 없다.",
+                "오른쪽 눈에서 축소되고 왼쪽 눈에서 확대된다.",
+                "오른쪽 눈에서 확대되고 왼쪽 눈에서 축소된다."
+            ],
+            "answer": 0
+        },
+        {
+            "question": "26. 호르너증후군에 관한 설명으로 옳은 것은?",
+            "image": "",
+            "options": [
+                "눈돌림신경의 장애로 발생한다.",
+                "부교감신경의 병변으로 발생한다.",
+                "동공부등은 어두운 곳에서 더 심하다.",
+                "장애가 있는 눈의 동공이 더 확대된다.",
+                "장애가 있는 눈의 눈꺼풀뒷당김이 나타난다."
+            ],
+            "answer": 2
+        },
+        {
+            "question": "27. 안저검사가 불가능한 경우 망막의 기능을 평가하기 위한 검사법은?",
+            "image": "",
+            "options": ["초음파검사", "형광안저촬영조영술", "눈전위도검사(EOG)", "망막전위도검사(ERG)", "시유발전위도검사(VEP)"],
+            "answer": 3
+        },
+        {
+            "question": "28. 다음과 같은 특징과 증상을 보이는 질환은?\n\n• 세균단백에 의한 지연형 과민반응\n• 각막가장자리에 결절(1~3 mm) 형성\n• 이물감, 눈물흘림, 눈부심",
+            "image": "",
+            "options": ["건성각결막염", "봄철각결막염", "봉입체결막염", "유행각결막염", "플릭텐각결막염"],
+            "answer": 4
+        },
+        {
+            "question": "29. 다음 내용과 관련 있는 질환은?\n\n• 원인: 삼차신경 제1가지(분지)의 마비\n• 증상: 각막지각과 눈깜빡임반사 소실",
+            "image": "",
+            "options": ["건성각결막염", "무렌각막궤양", "신경영양각막염", "급성출혈결막염", "아토피각결막염"],
+            "answer": 2
+        },
+        {
+            "question": "30. 노년백내장에서 피질이 액화되고 수정체핵이 가라앉은 상태는?",
+            "image": "",
+            "options": ["미숙백내장", "성숙백내장", "초기백내장", "팽대백내장", "모르가니백내장"],
+            "answer": 4
+        },
+        {
+            "question": "31. 유리체혼탁으로 발생하는 증상은?",
+            "image": "",
+            "options": ["건성안", "군날개", "날파리증", "결막유두비대", "망막색소변성"],
+            "answer": 2
+        },
+        {
+            "question": "32. 다음과 같은 특징과 증상을 보이는 질환은?\n\n• 결막전체에 심한 충혈이 발생하여 '핑크아이'로 불림\n• 점액화농성 분비물, 결막부종, 유두\n• 분비물로 인한 흐린 시력과 달무리 현상",
+            "options": ["막결막염", "봄철각결막염", "급성세균결막염", "점막유사물집증", "단순포진결막염"],
+            "answer": 2
+        },
+        {
+            "question": "33. 다음과 같은 특징과 증상을 보이는 질환은?\n\n• 원인: 바이러스\n• 특징: 발병 후 5~14일 사이에 눈부심이 심해짐\n  발병 후 2주까지 전염성이 강함\n  어린이의 경우 고열, 인후통, 설사 등의 전신증상 수반\n• 증상: 충혈, 눈물흘림, 결막부종",
+            "options": ["봉입체결막염", "유행각결막염", "급성출혈결막염", "단순포진결막염", "구석눈꺼풀결막염"],
+            "answer": 1
+        },
+        {
+            "question": "34. 다음과 같은 특징과 증상을 보이는 질환은?\n\n• 원인: 꽃가루, 풀, 동물의 털\n• 특징: 즉시형 과민반응\n  면역글로불린E(IgE) 증가\n• 증상: 가려움, 끈끈한 점성분비물",
+            "options": ["트라코마", "의인결막염", "단순포진결막염", "점막유사물집증", "계절알레르기결막염"],
+            "answer": 4
+        },
+        {
+            "question": "35. 다음 내용과 관련 있는 질환은?\n\n• 한쪽 눈의 외상 후 수일~수년 내 발병\n• 외상안이나 외상을 입지 않은 눈에 전체포도막염 발생\n• 섬모체가 손상된 경우 발생 위험이 높음",
+            "options": ["교감안염", "베체트병", "사르코이드증", "톡소플라스마증", "중심장액맥락망막병증"],
+            "answer": 0
+        },
+        {
+            "question": "36. 다음 내용과 관련 있는 질환은?\n\n• 각막 중심부의 회황색 원형 침윤\n• 각막내피반(corneal endothelial plaque)\n• 앞방축농 발생\n• 위성병소 형성",
+            "options": ["무렌각막궤양", "진균각막궤양", "녹농균각막궤양", "플릭텐각막궤양", "바이러스각막궤양"],
+            "answer": 1
+        },
+        {
+            "question": "37. 다음과 같은 특징을 보이는 질환은?\n\n• 오염된 점안액을 통해 감염됨\n• 궤양이 각막 전체로 급속하게 퍼짐\n• 궤양부의 삼출물이 청록색을 띰\n• 앞방축농 발생",
+            "options": ["진균각막궤양", "녹농균각막궤양", "가장자리각막궤양", "포도알균각막궤양", "폐렴알균각막궤양"],
+            "answer": 1
+        },
+        {
+            "question": "38. 다음과 같은 증상을 보이는 질환은?\n\n• 자각증상: 달무리, 심한 안구 통증, 급격한 시력장애, 구토\n• 타각증상: 섬모체충혈, 동공확대",
+            "options": ["시신경염", "망막색소변성", "폐쇄각녹내장", "망막분지정맥폐쇄", "비타민A 결핍증 각막궤양"],
+            "answer": 2
+        },
+        {
+            "question": "39. 다음과 같은 특징을 보이는 질환은?\n\n• 안과학적 응급질환\n• 통증이 없는 급격한 시력장애\n• 중심오목 부위의 앵두반점\n• 창백하고 혼탁한 망막",
+            "options": ["고혈압망막병증", "방사선망막병증", "나이관련황반변성", "망막중심동맥폐쇄", "망막중심정맥폐쇄"],
+            "answer": 3
+        },
+        {
+            "question": "40. 눈꺼풀의 짜이스샘, 몰샘에 발생하는 급성화농성염증은?",
+            "options": ["속다래끼", "콩다래끼", "바깥다래끼", "눈꺼풀테염", "마이봄샘염"],
+            "answer": 2
+        },
+        {
+            "question": "41. 티타늄 합금 안경테의 특성으로 옳은 것은?",
+            "options": ["강자성체이다.", "생체친화성이 좋지 않다.", "연성이 금보다 우수하다.", "비중이 양백에 비해 크다.", "공기 중에서 납땜이 어렵다."],
+            "answer": 4
+        },
+        {
+            "question": "42. 천연섬유소에 무수빙초산을 반응시켜 만드는 안경테 소재는?",
+            "options": ["에폭시", "탄소섬유", "셀룰로이드", "셀룰로오스 아세테이트", "셀룰로오스 프로피오네이트"],
+            "answer": 3
+        },
+        {
+            "question": "43. 안경테용 셀룰로이드를 제조할 때 가소제를 첨가하는 목적은?",
+            "options": ["탄성을 높이기 위해", "열전도도를 높이기 위해", "착색원료로 사용하기 위해", "제조 시 폭발을 방지하기 위해", "건조과정을 용이하게 하기 위해"],
+            "answer": 0
+        },
+        {
+            "question": "44. 주성분이 구리, 니켈 및 아연인 안경테 소재는?",
+            "options": ["청동", "양백", "황동", "모넬", "베릴륨동"],
+            "answer": 1
+        },
+        {
+            "question": "45. 플라스틱 렌즈를 착색제에 일정 시간 담가 렌즈 내부에 착색분자를 스며들게 하는 방법은?",
+            "options": ["염색착색법", "용융착색법", "도장착색법", "진공증착법", "분사착색법"],
+            "answer": 0
+        },
+        {
+            "question": "46. 유리렌즈의 화학강화법에 관한 설명으로 옳은 것은?",
+            "options": [
+                "처리온도는 약 800°C 정도이다.",
+                "표면 압축응력이 열강화법보다 크다.",
+                "열강화법에 비해 강화층 깊이가 깊다.",
+                "이온교환을 촉진하기 위해 염산(HCl)을 첨가한다.",
+                "렌즈에 있는 K⁺ 이온을 Na⁺ 이온으로 치환시킨다."
+            ],
+            "answer": 1
+        },
+        {
+            "question": "47. 운동을 좋아하여 렌즈 파손이 염려되는 어린이에게 적합한 안경렌즈 재료는?",
+            "options": ["크라운유리", "플린트유리", "폴리카보네이트(PC)", "아릴디글리콜카보네이트(ADC)", "폴리메틸메타아크릴레이트(PMMA)"],
+            "answer": 2
+        },
+        {
+            "question": "48. 아릴디글리콜카보네이트(ADC) 안경렌즈를 제조하는 방법은?",
+            "options": ["분사성형법", "증착가공법", "연속주조법", "주형중합법", "진공증착법"],
+            "answer": 3
+        },
+        {
+            "question": "49. 안경렌즈 소재로 사용하는 열경화성 플라스틱에 관한 설명으로 옳은 것은?",
+            "options": [
+                "500°C 정도에서 연화된다.",
+                "스크랩의 재활용이 가능하다.",
+                "폴리카보네이트(PC)가 해당된다.",
+                "3차원 망상구조의 고분자 화합물이다.",
+                "특정농도에서 형상기억효과를 나타낸다."
+            ],
+            "answer": 3
+        },
+        {
+            "question": "50. 이중초점렌즈 중에서 상의 도약이 발생하지 않으며 근용 시야가 가장 넓은 것은?",
+            "options": ["Ex(executive)형", "클립톡(kryptok)형", "플랫탑(flat top)형", "심리스(seamless)형", "커브드탑(curved top)형"],
+            "answer": 0
+        },
+        {
+            "question": "51. 안광학계에서 물측주평면의 위치는?",
+            "options": ["각막 앞쪽", "각막 내부", "수정체 내부", "수정체 뒤쪽", "각막과 수정체 사이"],
+            "answer": 4
+        },
+        {
+            "question": "52. 안광학계에서 양안시기능이나 동적시야를 측정할 때 기준점은?",
+            "options": ["절점", "주점", "초점", "동공중심점", "안구회선점"],
+            "answer": 4
+        },
+        {
+            "question": "53. 오른쪽 눈의 카파각이 +5°로 측정되었다. 이 눈으로 시계 문자판의 중앙을 볼 때 동공중심선(동공축)이 향하는 방향은?",
+            "options": ["2시", "4시", "6시", "8시", "10시"],
+            "answer": 1
+        },
+        {
+            "question": "54. 주시물체로부터 눈에 입사하는 광선속 중에서 주광선(chief ray)이 향하는 곳은?",
+            "options": ["주점", "초점", "각막정점", "안구회선점", "입사동중심"],
+            "answer": 4
+        },
+        {
+            "question": "55. 눈의 색수차를 이용한 검사는?",
+            "options": ["적록검사", "색각검사", "워쓰4점검사", "적색필터검사", "조절근점검사"],
+            "answer": 0
+        },
+        {
+            "question": "56. 정점간거리 변화와 관련하여 과교정 상태가 되는 것은?",
+            "options": [
+                "근시교정 안경의 정점간거리가 증가한 경우",
+                "원시교정 안경의 정점간거리가 감소한 경우",
+                "근시교정 안경과 동일한 처방의 콘택트렌즈를 착용한 경우",
+                "원시교정 안경과 동일한 처방의 콘택트렌즈를 착용한 경우",
+                "근시교정 콘택트렌즈와 동일한 처방의 안경을 착용한 경우"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "57. 외면은 +6.00 D의 구면, 내면은 수직경선 -7.00 D와 수평경선 -6.00 D의 토릭면인 안경렌즈로 교정되는 난시안은? (단, 얇은 렌즈이다.)",
+            "options": ["혼합난시", "원시성 단성 직난시", "원시성 단성 도난시", "근시성 단성 직난시", "근시성 단성 도난시"],
+            "answer": 3
+        },
+        {
+            "question": "58. 근시성 복성 직난시안을 교정하기 위한 처방은?",
+            "options": [
+                "S -1.00 D ⌒ C -1.00 D Ax 180°",
+                "S -1.00 D ⌒ C +1.00 D Ax 180°",
+                "S -1.00 D ⌒ C +1.00 D Ax 90°",
+                "S -1.00 D ⌒ C -2.00 D Ax 90°",
+                "S +2.00 D ⌒ C -1.00 D Ax 180°"
+            ],
+            "answer": 0
+        },
+        {
+            "question": "59. 무한대 거리의 물체가 공기 중에 놓인 S +6.00 D ⌒ C -4.00 D Ax 90° 렌즈에 의해 상을 맺었을 때 최소착란원의 위치는?",
+            "options": ["렌즈 후방 20 cm", "렌즈 후방 25 cm", "렌즈 후방 40 cm", "렌즈 후방 50 cm", "렌즈 후방 100 cm"],
+            "answer": 1
+        },
+        {
+            "question": "60. S -2.00 D ⌒ C -2.00 D Ax 180° 렌즈에서 TABO식 45° 경선의 굴절력은?",
+            "options": ["0.00 D", "-1.00 D", "-2.00 D", "-3.00 D", "-4.00 D"],
+            "answer": 3
+        },
+        {
+            "question": "61. S -1.00 D 렌즈로 완전교정되는 근시안이 나안으로 눈 앞 25 cm에 있는 물체를 볼 때 필요한 조절력은?",
+            "options": ["1.00 D", "1.50 D", "2.00 D", "2.50 D", "3.00 D"],
+            "answer": 4
+        },
+        {
+            "question": "62. 조절력 2.00 D인 사람이 S +2.00 D, Add 3.00 D 원근양용 처방의 이중초점안경을 착용하고 있다. 선명하게 볼 수 없는 범위는?",
+            "options": [
+                "눈 앞 무한대에서 눈 앞 100 cm 사이",
+                "눈 앞 100 cm에서 눈 앞 50 cm 사이",
+                "눈 앞 50 cm에서 눈 앞 33.3 cm 사이",
+                "눈 앞 33.3 cm에서 눈 앞 25 cm 사이",
+                "눈 앞 25 cm에서 눈 앞 20 cm 사이"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "63. 원시성 노안 교정용 이중초점렌즈에서 근용부 합성광학중심점의 위치는?",
+            "options": [
+                "존재하지 않음",
+                "자렌즈의 광학중심점",
+                "모렌즈 광학중심점의 위쪽",
+                "자렌즈 광학중심점의 아래쪽",
+                "모렌즈 광학중심점과 자렌즈 광학중심점 사이"
+            ],
+            "answer": 4
+        },
+        {
+            "question": "64. OU: S +3.00 D ⌒ C -2.00 D Ax 180°, Add 2.00 D 처방의 클립톡(kryptok)형 이중초점렌즈를 착용하고 시선이 근용부 상부경계선을 지날 때 상의 도약량은? (단, 자렌즈의 지름은 30 mm이다.)",
+            "options": ["0.00 Δ", "1.00 Δ", "2.00 Δ", "3.00 Δ", "4.00 Δ"],
+            "answer": 3
+        },
+        {
+            "question": "65. 시선이 C +2.50 D Ax 180° 렌즈의 광학중심점으로부터 수직상방 2 mm 지점을 통과할 때 유발되는 프리즘 굴절력은?",
+            "options": ["0.25 Δ", "0.50 Δ", "0.75 Δ", "1.00 Δ", "1.25 Δ"],
+            "answer": 1
+        },
+        {
+            "question": "66. 원시교정 안경렌즈의 자기배율(안경배율, spectacle magnification)을 감소시키기 위한 방법은?",
+            "options": [
+                "렌즈의 직경을 크게 한다.",
+                "정점간거리를 증가시킨다.",
+                "렌즈의 중심두께를 얇게 한다.",
+                "전면의 면굴절력을 증가시킨다.",
+                "굴절률이 낮은 재질의 렌즈를 사용한다."
+            ],
+            "answer": 2
+        },
+        {
+            "question": "67. 굴절성비정시안에서 상대안경배율(relative spectacle magnification)이 1이 되도록 하려면, 교정안경을 비정시안의 어느 곳에 위치시켜야 하는가? (단, 얇은 렌즈이다.)",
+            "options": ["물측초점", "물측주점", "상측초점", "상측주점", "안구회선점"],
+            "answer": 1
+        },
+        {
+            "question": "68. 비정시 교정 안경을 착용했을 때 선명시야가 가장 좁은 경우는? (단, 안경테 크기는 같다.)",
+            "options": ["S -10.00 D", "S -5.00 D", "S +1.00 D", "S +5.00 D", "S +10.00 D"],
+            "answer": 4
+        },
+        {
+            "question": "69. 굴절률 1.5, 두께 10 cm인 평행평면 유리판을 수직으로 통과한 광선의 과학적 거리는?",
+            "options": ["10 cm", "15 cm", "20 cm", "25 cm", "30 cm"],
+            "answer": 1
+        },
+        {
+            "question": "70. 공기 중에서 +5.00 D의 버전스를 갖는 광선속이 한 점으로 수렴하는 위치는?",
+            "options": ["기준파면 뒤 10 cm", "기준파면 뒤 20 cm", "기준파면 뒤 30 cm", "기준파면 뒤 40 cm", "기준파면 뒤 50 cm"],
+            "answer": 1
+        },
+        {
+            "question": "71. 굴절률이 작은 매질에서 큰 매질로 빛이 진행할 때의 설명으로 옳은 것은?",
+            "options": [
+                "속도가 빨라진다.",
+                "파장이 길어진다.",
+                "진동수가 작아진다.",
+                "굴절각이 입사각보다 작다.",
+                "굴절광선의 위상이 변한다."
+            ],
+            "answer": 3
+        },
+        {
+            "question": "72. 유리에 대한 물의 상대굴절률은? (단, 유리의 절대굴절률: 3/2, 물의 절대굴절률: 4/3)",
+            "options": ["8/9", "9/8", "4/3", "3/2", "2"],
+            "answer": 0
+        },
+        {
+            "question": "73. 전반사에 관한 설명으로 옳은 것은?",
+            "options": [
+                "반사각이 0°일 때 발생한다.",
+                "반사광선은 완전 직선 편광된다.",
+                "입사각이 임계각보다 클 때 일어난다.",
+                "반사광선과 굴절광선이 90°를 이룰 때 발생한다.",
+                "굴절률이 작은 매질에서 큰 매질로 빛이 진행할 때 발생한다."
+            ],
+            "answer": 2
+        },
+        {
+            "question": "74. 오목거울로 확대된 도립실상을 얻고자 한다. 물체의 위치로 옳은 것은? <자료(비공개)>",
+            "options": ["(가)", "(나)", "(다)", "(라)", "(마)"],
+            "answer": 2
+        },
+        {
+            "question": "75. 공기 중에 있는 프리즘에 관한 설명으로 옳은 것은?",
+            "options": [
+                "프리즘에 의한 상은 정각 쪽으로 이동한다.",
+                "프리즘의 정각이 작을수록 빛이 크게 꺾인다.",
+                "프리즘을 통과한 광선은 정각 쪽으로 꺾인다.",
+                "오목렌즈는 두 장의 프리즘 기저를 맞붙여 놓은 것과 같다.",
+                "제1면의 입사각과 제2면의 굴절각이 같으면 꺾임각이 최대가 된다."
+            ],
+            "answer": 0
+        },
+        {
+            "question": "76. 공기 중에 있는 얇은 렌즈 앞 1.00 m에 위치한 물체의 상을 렌즈 뒤 0.25 m 지점에 맺히게 하는 얇은 렌즈의 굴절력은?",
+            "options": ["+1.00 D", "+2.00 D", "+3.00 D", "+4.00 D", "+5.00 D"],
+            "answer": 4
+        },
+        {
+            "question": "77. 굴절률 1.5인 유리로 제작한 얇은 양볼록렌즈가 공기 중에 있다. 양면의 곡률 반경이 각각 0.10 m일 때 상측초점의 위치는?",
+            "options": ["렌즈 전방 0.05 m", "렌즈 후방 0.05 m", "렌즈 전방 0.10 m", "렌즈 후방 0.10 m", "렌즈 전방 0.20 m"],
+            "answer": 3
+        },
+        {
+            "question": "78. 공기 중에서 상측주점굴절력이 +4.00 D인 얇은 볼록렌즈와 -2.00 D인 얇은 오목렌즈가 공축상에서 0.10 m 떨어져 있다. 합성렌즈계의 상측주점굴절력은?",
+            "options": ["+1.20 D", "+2.00 D", "+2.80 D", "+3.60 D", "+4.40 D"],
+            "answer": 2
+        },
+        {
+            "question": "79. 두꺼운 렌즈에 관한 설명으로 옳은 것은?",
+            "options": [
+                "주점은 시각과 정적시야 측정의 기준점이다.",
+                "물체의 위치가 변하면 절점의 위치도 변한다.",
+                "물측주점과 상측주점 사이의 각배율은 +1.0이다.",
+                "물측매질과 상측매질의 굴절률이 같으면 주점과 절점은 일치한다.",
+                "물측절점을 향하여 입사한 광선과 상측절점에서 출사한 광선은 서로 직각을 이룬다."
+            ],
+            "answer": 3
+        },
+        {
+            "question": "80. 비축물점으로부터 광축에 비스듬하게 입사하는 빛에 의해 혜성의 꼬리와 같은 상이 형성되는 광학계의 결함은?",
+            "options": ["구면수차", "코마수차", "비점수차", "상면만곡", "왜곡수차"],
+            "answer": 1
+        },
+        {
+            "question": "81. 다음 설명과 관계된 빛의 영역은?\n\n• 파장이 200~380 nm 범위이다.\n• 백내장의 원인이 될 수 있다.\n• 살균효과 및 화학작용이 강하다.",
+            "options": ["적외선", "가시광선", "자외선", "X-선", "감마선"],
+            "answer": 2
+        },
+        {
+            "question": "82. 그림과 같이 파동이 A 지점에서 B 지점으로 진행하는 데 1초가 걸렸다. 이 파동의 진동수는? <자료(비공개)>",
+            "options": ["0.2 Hz", "0.5 Hz", "2.0 Hz", "5.0 Hz", "10.0 Hz"],
+            "answer": 2
+        },
+        {
+            "question": "83. 560 nm 파장의 빛이 안경렌즈에서 최소로 반사되기 위한 코팅막의 두께는? (단, 안경렌즈의 굴절률: 1.5, 코팅막의 굴절률: 1.4)",
+            "options": ["80 nm", "90 nm", "100 nm", "110 nm", "120 nm"],
+            "answer": 3
+        },
+        {
+            "question": "84. 빛의 회절현상에 관한 설명으로 옳은 것은?",
+            "options": [
+                "무지개가 보인다.",
+                "하늘이 파랗게 보인다.",
+                "한낮의 뜨거운 도로 위에 신기루가 보인다.",
+                "물 위에 떠 있는 무지개 색의 기름막이 보인다.",
+                "바늘구멍에 빛을 통과시키면 명암의 무늬가 보인다."
+            ],
+            "answer": 4
+        },
+        {
+            "question": "85. 그림과 같이 두 개의 편광판이 평행하고 편광축은 서로 45°를 이루고 있다. 편광되지 않은 빛이 광축에 평행하게 입사하였을 때, 두 개의 편광판을 투과한 빛의 세기는 입사한 빛의 세기의 몇 배가 되는가? <자료(비공개)>",
+            "options": ["1", "1/2", "1/3", "1/4", "1/5"],
+            "answer": 3
+        }
+    ];
+
+    let userAnswers = new Array(testData.length).fill(null);
+    let currentQuestionIndex = 0;
+    let totalSeconds = 0;
+    let timerInterval = null;
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${minutes}:${seconds}`;
+            localStorage.setItem('cbt_21_1_seconds', totalSeconds);
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function buildOMRGrid() {
+        const container = document.getElementById('omr-grid-container');
+        container.innerHTML = '';
+        testData.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'omr-btn';
+            btn.id = `omr-btn-${idx}`;
+            btn.innerText = idx + 1;
+            btn.onclick = () => goToQuestion(idx);
+            container.appendChild(btn);
+        });
+        updateOMRGrid();
+    }
+
+    function updateOMRGrid() {
+        testData.forEach((_, idx) => {
+            const btn = document.getElementById(`omr-btn-${idx}`);
+            if (!btn) return;
+
+            if (userAnswers[idx] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.remove('answered');
+            }
+
+            if (idx === currentQuestionIndex) {
+                btn.classList.add('current');
+            } else {
+                btn.classList.remove('current');
+            }
+        });
+    }
+
+    function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        saveProgress();
+        updateOMRGrid();
+    }
+
+    function loadQuestion() {
+        const qText = document.getElementById('question-text');
+        const optArea = document.getElementById('options-area');
+        const progressDisplay = document.getElementById('progress-display');
+        
+        document.getElementById('answer-display').innerText = '';
+        progressDisplay.innerText = `현재 진행률: ${currentQuestionIndex + 1} / ${testData.length} 문항`;
+        const currentQ = testData[currentQuestionIndex];
+        qText.innerText = currentQ.question;
+        optArea.innerHTML = '';
+
+        currentQ.options.forEach((opt, index) => {
+            const label = document.createElement('label');
+            const isChecked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+            label.innerHTML = `<input type="radio" name="option" value="${index}" ${isChecked} onchange="selectOption(${index})"> <strong>${index + 1}번.</strong> ${opt}`;
+            optArea.appendChild(label);
+        });
+
+        updateOMRGrid();
+    }
+
+    function showAnswer() {
+        if (currentQuestionIndex < testData.length) {
+            const currentQ = testData[currentQuestionIndex];
+            document.getElementById('answer-display').innerText = ` 정답: ${currentQ.answer + 1}번`;
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < testData.length - 1) {
+            currentQuestionIndex++;
+            saveProgress();
+            loadQuestion();
+        } else {
+            confirmSubmit();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            saveProgress();
+            loadQuestion();
+        }
+    }
+
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        saveProgress();
+        loadQuestion();
+    }
+
+    function confirmSubmit() {
+        const unansweredCount = userAnswers.filter(ans => ans === null).length;
+        let alertMsg = "시험을 최종 종료하고 제출하시겠습니까?";
+        if (unansweredCount > 0) {
+            alertMsg = `아직 답을 고르지 않은 문제가 ${unansweredCount}개 있습니다. 이대로 ${alertMsg}`;
+        }
+
+        if (confirm(alertMsg)) {
+            submitExam();
+        }
+    }
+
+    function submitExam() {
+        stopTimer();
+        
+        let score = 0;
+        let incorrectQuestions = [];
+
+        testData.forEach((q, idx) => {
+            if (userAnswers[idx] === q.answer) {
+                score++;
+            } else {
+                incorrectQuestions.push({
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswers[idx],
+                    correctAnswer: q.answer
+                });
+            }
+        });
+
+        document.getElementById('progress-display').innerText = "시험 종료";
+        
+        let resultHTML = `<h3>📝 시험 결과</h3>`;
+        resultHTML += `<p style="font-size: 1.2em;">총 <strong>${testData.length}</strong>문제 중 <strong>${score}</strong>문제 맞혔습니다.</p>`;
+        resultHTML += `<p style="color: #666;">총 소요 시간: <strong>${document.getElementById('timer-display').innerText}</strong></p><hr>`;
+        
+        if (incorrectQuestions.length > 0) {
+            resultHTML += `<h3 style="color: #d9534f; margin-top: 25px;">❌ 틀린 문제 다시보기 (${incorrectQuestions.length}문항)</h3>`;
+            incorrectQuestions.forEach((q) => {
+                const userAnsText = q.userAnswer !== null ? `(선택 ${q.userAnswer + 1}) ${q.options[q.userAnswer]}` : "선택 안 함 (넘어감)";
+                resultHTML += `
+                    <div class="wrong-box">
+                        <div class="wrong-title">${q.question}</div>
+                        <div class="my-ans">❌ 내가 고른 답: ${userAnsText}</div>
+                        <div class="correct-ans">⭕ 실제 정답: (보기 ${q.correctAnswer + 1}) ${q.options[q.correctAnswer]}</div>
+                    </div>
+                `;
+            });
+        } else {
+            resultHTML += `<h3 style="color: #2b8a3e; margin-top: 25px;">🎉 만점입니다! 최고의 실력입니다!</h3>`;
+        }
+
+        resultHTML += `
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="restartExam()" style="background: #28a745; padding: 15px 40px; font-size: 1.1em;">🔄 시험 다시 풀기</button>
+            </div>
+        `;
+        
+        document.getElementById('quiz-area').innerHTML = resultHTML;
+        localStorage.setItem('cbt_21_1_finished', 'true');
+    }
+
+    function saveProgress() {
+        localStorage.setItem('cbt_21_1_index', currentQuestionIndex);
+        localStorage.setItem('cbt_21_1_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('cbt_21_1_finished', 'false');
+    }
+
+    function clearProgress() {
+        localStorage.removeItem('cbt_21_1_index');
+        localStorage.removeItem('cbt_21_1_answers');
+        localStorage.removeItem('cbt_21_1_seconds');
+        localStorage.removeItem('cbt_21_1_finished');
+    }
+
+    function restartExam() {
+        clearProgress();
+        location.reload();
+    }
+
+    function initExam() {
+        clearProgress(); 
+
+        buildOMRGrid();
+        loadQuestion();
+        startTimer();
+    }
+
+    /* --- 계산기 수식 안전 연산 엔진 --- */
+    let calcExpression = '';
+    const screen = document.getElementById('calc-screen');
+
+    function appendCalc(val) {
+        if (screen.value === '0' && !isNaN(val)) {
+            calcExpression = val;
+        } else {
+            calcExpression += val;
+        }
+        screen.value = calcExpression;
+    }
+
+    function clearCalc() {
+        calcExpression = '';
+        screen.value = '0';
+    }
+
+    function calculate() {
+        try {
+            const safeSanitizedExpression = calcExpression.replace(/[^0-9+\-*/.]/g, '');
+            if (!safeSanitizedExpression) {
+                screen.value = '0';
+                return;
+            }
+
+            const computeResult = new Function(`return (${safeSanitizedExpression})`)();
+            
+            if (computeResult === undefined || isNaN(computeResult) || !isFinite(computeResult)) {
+                throw new Error();
+            }
+            
+            screen.value = Number(computeResult.toFixed(4)); 
+            calcExpression = screen.value;
+        } catch (e) {
+            screen.value = '오류';
+            calcExpression = '';
+        }
+    }
+
+    initExam();
+</script>
+
+</body>
+</html>
